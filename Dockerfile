@@ -21,3 +21,4 @@ RUN pip install rasterio
 RUN pip install psycopg2
 RUN pip install rasterstats
 RUN pip install requests
+RUN pip install pymodis
