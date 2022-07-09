@@ -1,7 +1,7 @@
 #auth
 auth.py
 
-lst_terra/
+lst_terra/*
 
 # Logs
 logs
