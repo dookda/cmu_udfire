@@ -23,8 +23,10 @@ def warp():
 def download():
     print("downloading...")
     # cmd = f"modis_download.py -U {username} -P {password} -I -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 /mnt/lst_terra/"
-    cmd = f"modis_download.py -U {username} -P {password} -r -s MOLA -p MYD11A1.006 -t h27v07 -f 2021-01-01 -e 2021-01-02 {path}"
-    os.system(cmd)
+    mod = f"modis_download.py -U {username} -P {password} -r -s MOLT -p MOD09A1.006 -t h27v07 -f 2021-01-01 -e 2021-01-02 {path}"
+    os.system(mod)
+    myd = f"modis_download.py -U {username} -P {password} -r -s MOLA -p MYD09A1.006 -t h27v07 -f 2021-01-01 -e 2021-01-02 {path}"
+    os.system(myd)
     print("finish download")
     # warp()
 

@@ -7,7 +7,7 @@ docker build --tag pymodis .
 
 docker run
 ```
-docker run --rm -it --name py_modis -v $(pwd)/pyModis:/app/pyModis -v $(pwd)/flaskapi:/app/flaskapi -p 3200:3200 py_flask bash
+docker run --rm -it --name pymodis -v $(pwd)/pyModis:/app/pyModis -v $(pwd)/flaskapi:/app/flaskapi -p 3200:3200 py_flask bash
 ```
 
 docker login & logout
