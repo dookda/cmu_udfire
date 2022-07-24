@@ -12,7 +12,7 @@ RUN apt update && apt install python3-gdal
 RUN export CPLUS_INCLUDE_PATH=/usr/include/gdal
 RUN export C_INCLUDE_PATH=/usr/include/gdal
 
-RUN apt install curl
+RUN apt-get install wget -y
 
 # Install pip reqs
 RUN pip install flask

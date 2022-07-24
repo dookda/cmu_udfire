@@ -1,6 +1,8 @@
 import os
 import subprocess
-from auth import earth
+
+import requests
+from auth import earth, token
 from datetime import date, timedelta
 
 username = earth["user"]
@@ -38,9 +40,16 @@ def download():
 
 
 def download2():
-    mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/001/' --header 'Authorization: Bearer c2FrZGE6YzJGclpHRXVhRzl0YUhWaGJrQm5iV0ZwYkM1amIyMD06MTY1ODY1MDA3NzozYWJiNmE4NjliNWNkYjNlNjJmYmIwOTcwYjdhOTYwZDExM2U4OGNm' -P ."
+    mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/001/' --header 'Authorization: {token}' -P ."
+    os.system(mod)
+
+
+def check_extent():
+    dt = date.today()
+    url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/geoMeta/61/TERRA/2022/MOD03_{dt}.txt'
+    mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O ./txt/MOD03_{dt}.txt"
     os.system(mod)
 
 
 if __name__ == '__main__':
-    download()
+    check_extent()
