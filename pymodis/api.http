@@ -1,0 +1,6 @@
+GET http://www.opengis.net/def/rel/ogc/1.0/dataset HTTP/1.1
+
+###
+https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MOD09/2022/199/MOD09.A2022199.0430.006.2022201031313.hdf
+
+https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/191/MOD02HKM.A2022191.0340.061.2022191131651.hdf
