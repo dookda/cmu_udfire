@@ -24,3 +24,4 @@ RUN pip install psycopg2
 RUN pip install rasterstats
 RUN pip install requests
 RUN pip install pymodis
+RUN pip install slugify
