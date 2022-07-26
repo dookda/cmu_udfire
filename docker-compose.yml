@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  pymodis:
+    container_name: pymodis
+    build: ./pymodis
+    depends_on:
+      - postgis
+    # ports:
+    #   - "80:80"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./pymodis:/app/pymodis
+    # command: bash
+
+  postgis:
+    image: postgis/postgis
+    container_name: postgis_pymodis
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=geodb
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./postgres/geodb.sql:/docker-entrypoint-initdb.d/geodb.sql
