@@ -1,9 +1,9 @@
 #auth
 auth.py
 
-./pymodis/data/
-./pymodis/out/
-./pymodis/tmp/
+pymodis/data/
+pymodis/out/
+pymodis/tmp/
 
 lst_terra/*
 
