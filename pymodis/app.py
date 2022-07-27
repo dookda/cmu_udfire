@@ -80,7 +80,7 @@ def getData(doy, dat):
     out = f"./data/{dat}"
     url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}/{dat}'
     mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O {out}"
-    # os.system(mod)
+    os.system(mod)
     warpFile(dat)
 
 
