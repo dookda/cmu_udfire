@@ -30,14 +30,20 @@ def rmLyr():
         os.remove(f'./tmp/{f}')
 
 
-def calNdvi(dat, f):
+def calNdvi(red, nir, f):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
     print("cal NDVI")
 
     target = f"./out/{f[:-4]}_500m_32647_ndvi.tif"
-    exp = f'gdal_calc.py -A {dat} --A_band=2 -B {dat} --B_band=1 --calc="(1.0*A-B)/(1.0*A+B)" --outfile={target} --NoDataValue=0'
+    # --NoDataValue=0
+    exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
     print("ndvi ok")
+
+    targetClip = f"./out/{f[:-4]}_500m_32647_ndvi_clip.tif"
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    os.system(clip)
+    print("clip ok")
 
 
 def warpFile(f):
@@ -73,14 +79,14 @@ def warpFile(f):
     os.remove(VRT)
     print("Translate ok")
 
-    calNdvi(out_file, f)
+    calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f)
 
 
 def getData(doy, dat):
     out = f"./data/{dat}"
     url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}/{dat}'
     mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O {out}"
-    os.system(mod)
+    # os.system(mod)
     warpFile(dat)
 
 
