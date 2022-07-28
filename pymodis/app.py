@@ -30,6 +30,18 @@ def rmLyr():
         os.remove(f'./tmp/{f}')
 
 
+def getPixelValue(ndvi, f):
+    loc = [[17.9413, 100.3276],
+           [17.9133, 100.3158],
+           [17.8635, 100.3021],
+           [17.8087, 100.3214],
+           [17.7539, 100.3114]]
+    for i in loc:
+        res = os.popen(
+            f'gdallocationinfo -valonly -wgs84 {ndvi} {i[1]} {i[0]}').read()
+        print(res)
+
+
 def calNdvi(red, nir, f):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
     print("cal NDVI")
@@ -44,6 +56,7 @@ def calNdvi(red, nir, f):
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip ok")
+    getPixelValue(targetClip, f)
 
 
 def warpFile(f):
@@ -96,7 +109,7 @@ def merge():
 
 
 def getJSON():
-    doy = datetime.now().timetuple().tm_yday - 3
+    doy = datetime.now().timetuple().tm_yday - 4
     if doy < 10:
         doy = "00" + str(doy)
     elif doy < 100:
