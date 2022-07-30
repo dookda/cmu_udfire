@@ -12,7 +12,9 @@ RUN apt update && apt install python3-gdal
 RUN export CPLUS_INCLUDE_PATH=/usr/include/gdal
 RUN export C_INCLUDE_PATH=/usr/include/gdal
 
-RUN apt-get install wget -y
+RUN apt install nano -y
+RUN apt update && apt-get install wget -y
+RUN apt update && apt install cron && systemctl enable cron
 
 # Install pip reqs
 RUN pip install flask
@@ -25,3 +27,4 @@ RUN pip install rasterstats
 RUN pip install requests
 RUN pip install pymodis
 RUN pip install slugify
+RUN pip install schedule

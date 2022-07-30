@@ -6,6 +6,8 @@ from datetime import date, timedelta, datetime
 import numpy as np
 from osgeo import gdal
 from osgeo import gdal_array as ga
+import schedule
+import time
 
 # db
 from auth import earth, token, conn
@@ -26,19 +28,22 @@ password = earth["pass"]
 day = ''
 
 
-def rmLyr():
+def removeFile():
+    dir = os.listdir("tmp")
     for f in dir:
         os.remove(f'./tmp/{f}')
+    print('delete files from tmp')
 
 
 def insertZstat(lat, lon, ndvi, f, dd):
     sql = f"INSERT INTO ndvi(ndvi,fname,dd, geom)VALUES({ndvi},'{f}','{dd}', ST_GeomFromText('POINT({lon} {lat})', 4326))"
-    print(sql)
+    # print(sql)
     cursor.execute(sql)
-    print("ok")
+    print("insert NDVI to database success")
     # records = cursor.fetchall()
     # for row in records:
     #     print(row)
+    removeFile()
 
 
 def getPixelValue(ndvi, f, dd):
@@ -50,24 +55,23 @@ def getPixelValue(ndvi, f, dd):
     for i in loc:
         res = os.popen(
             f'gdallocationinfo -valonly -wgs84 {ndvi} {i[1]} {i[0]}').read()
-        print(res)
-        insertZstat({i[0]}, {i[1]}, res, f, dd)
+        print('get pixel value from point')
+        insertZstat(i[0], i[1], res, f, dd)
 
 
 def calNdvi(red, nir, f, dd):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
-    print("cal NDVI")
 
-    target = f"./out/{f[:-4]}_500m_32647_ndvi.tif"
+    target = f"./ndvi/{f[:-4]}_500m_32647_ndvi.tif"
     # --NoDataValue=0
     exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
-    print("ndvi ok")
+    print("generate NDVI")
 
-    targetClip = f"./out/{f[:-4]}_500m_32647_ndvi_clip.tif"
+    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndvi_clip.tif"
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
-    print("clip ok")
+    print("clip NDVI")
     getPixelValue(targetClip, f, dd)
 
 
@@ -102,7 +106,7 @@ def warpFile(f, dd):
                    callback=gdal.TermProgress_nocb)
     del inputImage
     os.remove(VRT)
-    print("Translate ok")
+    print("translate HDF")
 
     calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f, dd)
 
@@ -112,6 +116,7 @@ def getData(doy, dat, dd):
     url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}/{dat}'
     mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O {out}"
     os.system(mod)
+    print('download MODIS HDF')
     warpFile(dat, dd)
 
 
@@ -130,8 +135,6 @@ def getJSON():
     elif doy < 100:
         doy = "0" + str(doy)
 
-    print(doy)
-
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}.json"
 
     r = requests.get(url)
@@ -139,9 +142,14 @@ def getJSON():
     for a in arr:
         name = a["name"].split(".")
         if name[2] == 'h27v07':
-            print(a["name"])
+            print(f'get HDF name: {a["name"]}')
             getData(doy, a["name"], dd)
 
 
 if __name__ == '__main__':
     getJSON()
+    # schedule.every(20).seconds.do(test)
+    # schedule.every().day.at("07:30").do(getJSON)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
