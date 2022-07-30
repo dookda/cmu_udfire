@@ -28,3 +28,4 @@ RUN pip install requests
 RUN pip install pymodis
 RUN pip install slugify
 RUN pip install schedule
+# RUN cd pymodis && python3 app.py

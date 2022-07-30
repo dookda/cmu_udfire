@@ -1,5 +1,21 @@
 version: "3.3"
 services:
+  nodejs:
+    image: "node"
+    container_name: nodejs
+    working_dir: /app/nodejs
+    restart: always
+    depends_on:
+      - postgres
+      - geoserver
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./nodejs:/app/nodejs
+    expose:
+      - "3000"
+    command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
+
   pymodis:
     container_name: pymodis
     build: ./pymodis
@@ -22,6 +38,6 @@ services:
       - POSTGRES_PASSWORD=1234
       - POSTGRES_DB=geodb
     ports:
-      - "5434:5432"
+      - "5432:5432"
     volumes:
       - ./postgres/geodb.sql:/docker-entrypoint-initdb.d/geodb.sql
