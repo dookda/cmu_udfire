@@ -2,18 +2,17 @@ version: "3.3"
 services:
   nodejs:
     image: "node"
-    container_name: nodejs
+    container_name: nodejs_pymodis
     working_dir: /app/nodejs
     restart: always
     depends_on:
-      - postgres
-      - geoserver
+      - postgis
     environment:
       - NODE_ENV=production
     volumes:
       - ./nodejs:/app/nodejs
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
 
   pymodis:
@@ -27,7 +26,7 @@ services:
     tty: true
     volumes:
       - ./pymodis:/app/pymodis
-    # command: bash
+    command: bash -c "cd pymodis && python3 app.py"
 
   postgis:
     image: postgis/postgis

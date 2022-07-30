@@ -43,22 +43,22 @@ SET default_tablespace = '';
 --
 
 CREATE TABLE public.ndvi (
-    gid integer NOT NULL,
-    nadi numeric,
+    gid serial NOT NULL,
+    ndvi numeric,
     fname character varying(100),
     dd date,
     geom public.geometry(POINT,4326)
 );
 
 
-ALTER TABLE public.cm_agriculture_zoning OWNER TO postgres;
+ALTER TABLE public.ndvi OWNER TO postgres;
 
 --
 -- TOC entry 202 (class 1259 OID 676108)
 -- Name: cm_agriculture_zoning_gid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.cm_agriculture_zoning_gid_seq
+CREATE SEQUENCE public.ndvi_gid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -67,7 +67,7 @@ CREATE SEQUENCE public.cm_agriculture_zoning_gid_seq
     CACHE 1;
 
 
-ALTER TABLE public.cm_agriculture_zoning_gid_seq OWNER TO postgres;
+ALTER TABLE public.ndvi_gid_seq OWNER TO postgres;
 
 --
 -- TOC entry 4155 (class 0 OID 0)
@@ -75,4 +75,4 @@ ALTER TABLE public.cm_agriculture_zoning_gid_seq OWNER TO postgres;
 -- Name: cm_agriculture_zoning_gid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.cm_agriculture_zoning_gid_seq OWNED BY public.cm_agriculture_zoning.gid;
+ALTER SEQUENCE public.ndvi_gid_seq OWNED BY public.ndvi.gid;
