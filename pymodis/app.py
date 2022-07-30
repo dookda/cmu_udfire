@@ -23,6 +23,7 @@ cursor = pg.cursor()
 # earth explorer
 username = earth["user"]
 password = earth["pass"]
+day = ''
 
 
 def rmLyr():
@@ -30,7 +31,17 @@ def rmLyr():
         os.remove(f'./tmp/{f}')
 
 
-def getPixelValue(ndvi, f):
+def insertZstat(lat, lon, ndvi, f, dd):
+    sql = f"INSERT INTO ndvi(ndvi,fname,dd, geom)VALUES({ndvi},'{f}','{dd}', ST_GeomFromText('POINT({lon} {lat})', 4326))"
+    print(sql)
+    cursor.execute(sql)
+    print("ok")
+    # records = cursor.fetchall()
+    # for row in records:
+    #     print(row)
+
+
+def getPixelValue(ndvi, f, dd):
     loc = [[17.9413, 100.3276],
            [17.9133, 100.3158],
            [17.8635, 100.3021],
@@ -40,9 +51,10 @@ def getPixelValue(ndvi, f):
         res = os.popen(
             f'gdallocationinfo -valonly -wgs84 {ndvi} {i[1]} {i[0]}').read()
         print(res)
+        insertZstat({i[0]}, {i[1]}, res, f, dd)
 
 
-def calNdvi(red, nir, f):
+def calNdvi(red, nir, f, dd):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
     print("cal NDVI")
 
@@ -56,10 +68,10 @@ def calNdvi(red, nir, f):
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip ok")
-    getPixelValue(targetClip, f)
+    getPixelValue(targetClip, f, dd)
 
 
-def warpFile(f):
+def warpFile(f, dd):
     in_file = f"./data/{f}"
     out_tmp = f"./tmp/{f[:-4]}_500m_32647_b"
     out_file = f"./out/{f[:-4]}_500m_32647.tif"
@@ -92,15 +104,15 @@ def warpFile(f):
     os.remove(VRT)
     print("Translate ok")
 
-    calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f)
+    calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f, dd)
 
 
-def getData(doy, dat):
+def getData(doy, dat, dd):
     out = f"./data/{dat}"
     url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}/{dat}'
     mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O {out}"
-    # os.system(mod)
-    warpFile(dat)
+    os.system(mod)
+    warpFile(dat, dd)
 
 
 def merge():
@@ -109,7 +121,10 @@ def merge():
 
 
 def getJSON():
-    doy = datetime.now().timetuple().tm_yday - 4
+    dt = datetime.now()
+    doy = dt.timetuple().tm_yday - 3
+    dd = dt.strftime("%Y-%m-%d")
+
     if doy < 10:
         doy = "00" + str(doy)
     elif doy < 100:
@@ -125,7 +140,7 @@ def getJSON():
         name = a["name"].split(".")
         if name[2] == 'h27v07':
             print(a["name"])
-            getData(doy, a["name"])
+            getData(doy, a["name"], dd)
 
 
 if __name__ == '__main__':

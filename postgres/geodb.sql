@@ -42,21 +42,12 @@ SET default_tablespace = '';
 -- Name: cm_agriculture_zoning; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.cm_agriculture_zoning (
+CREATE TABLE public.ndvi (
     gid integer NOT NULL,
-    geom public.geometry(MultiPolygon,32647),
-    id integer,
-    pro_th character varying(100),
-    amp_th character varying(100),
-    tam_th character varying(100),
-    muni_th character varying(100),
-    moo_code character varying(20),
-    vill_th character varying(100),
-    code character varying(50),
-    describe character varying(239),
-    cre_date character varying(30),
-    cre_organ character varying(100),
-    cre_orgsup character varying(100)
+    nadi numeric,
+    fname character varying(100),
+    dd date,
+    geom public.geometry(POINT,4326)
 );
 
 
