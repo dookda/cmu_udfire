@@ -127,8 +127,8 @@ def merge():
 
 def getJSON():
     dt = datetime.now()
-    doy = dt.timetuple().tm_yday - 3
-    dd = dt.strftime("%Y-%m-%d")
+    doy = dt.timetuple().tm_yday - 4
+    dd = datetime.today() - timedelta(days=4)
 
     if doy < 10:
         doy = "00" + str(doy)
@@ -147,9 +147,9 @@ def getJSON():
 
 
 if __name__ == '__main__':
-    getJSON()
-    # schedule.every(20).seconds.do(test)
+    # getJSON()
+    schedule.every(120).seconds.do(getJSON)
     # schedule.every().day.at("07:30").do(getJSON)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

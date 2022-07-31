@@ -41,14 +41,13 @@ services:
     volumes:
       - ./pymodis:/app/pymodis
     command: bash -c "cd pymodis && python3 app.py"
-
-  geoserver:
-    container_name: geoserver_pymodis
-    depends_on:
-      - postgres
-    image: tomcat:8.5.79-jre8
-    volumes:
-      - ./tomcat_webapps/:/usr/local/tomcat/webapps/
-      - ./tomcat_webapps/fonts/truetype/:/usr/share/fonts/truetype/
-    ports:
-      - '8080:8080'
+    # geoserver:
+    #   container_name: geoserver_pymodis
+    #   depends_on:
+    #     - postgres
+    #   image: tomcat:8.5.79-jre8
+    #   volumes:
+    #     - ./tomcat/:/usr/local/tomcat/webapps/
+    #     - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
+    #   ports:
+    #     - '8080:8080'

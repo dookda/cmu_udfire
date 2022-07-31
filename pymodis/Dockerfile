@@ -14,7 +14,7 @@ RUN export C_INCLUDE_PATH=/usr/include/gdal
 
 RUN apt install nano -y
 RUN apt update && apt-get install wget -y
-RUN apt update && apt install cron && systemctl enable cron
+RUN apt update && apt install curl -y
 
 # Install pip reqs
 RUN pip install flask
