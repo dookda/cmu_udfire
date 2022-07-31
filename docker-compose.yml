@@ -1,5 +1,19 @@
 version: "3.3"
 services:
+
+  postgis:
+    image: postgis/postgis
+    container_name: postgis_pymodis
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=geodb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/geodb.sql:/docker-entrypoint-initdb.d/geodb.sql
+
   nodejs:
     image: "node"
     container_name: nodejs_pymodis
@@ -28,15 +42,13 @@ services:
       - ./pymodis:/app/pymodis
     command: bash -c "cd pymodis && python3 app.py"
 
-  postgis:
-    image: postgis/postgis
-    container_name: postgis_pymodis
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=geodb
-    ports:
-      - "5432:5432"
+  geoserver:
+    container_name: geoserver_pymodis
+    depends_on:
+      - postgres
+    image: tomcat:8.5.79-jre8
     volumes:
-      - ./postgres/geodb.sql:/docker-entrypoint-initdb.d/geodb.sql
+      - ./tomcat_webapps/:/usr/local/tomcat/webapps/
+      - ./tomcat_webapps/fonts/truetype/:/usr/share/fonts/truetype/
+    ports:
+      - '8080:8080'
