@@ -1,11 +1,11 @@
 #auth
 auth.py
 
-pymodis/data/
-pymodis/out/
-pymodis/tmp/
-pymodis/ndvi/
-pymodis/ndvi_clip/
+pymodis/data/*
+pymodis/out/*
+pymodis/tmp/*
+pymodis/ndvi/*
+pymodis/ndvi_clip/*
 
 lst_terra/*
 
