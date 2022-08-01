@@ -29,11 +29,24 @@ services:
       - "3000:3000"
     command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
 
+  geoserver:
+    container_name: geoserver_pymodis
+    depends_on:
+      - postgres
+    image: tomcat:8.5.79-jre8
+    volumes:
+      - ./tomcat/:/usr/local/tomcat/webapps/
+      - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
+      - ./pymodis/ndvi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndvi_clip/
+    ports:
+      - '8080:8080'
+
   pymodis:
     container_name: pymodis
     build: ./pymodis
     depends_on:
       - postgis
+      - geoserver
     # ports:
     #   - "80:80"
     stdin_open: true
@@ -41,13 +54,3 @@ services:
     volumes:
       - ./pymodis:/app/pymodis
     command: bash -c "cd pymodis && python3 app.py"
-    # geoserver:
-    #   container_name: geoserver_pymodis
-    #   depends_on:
-    #     - postgres
-    #   image: tomcat:8.5.79-jre8
-    #   volumes:
-    #     - ./tomcat/:/usr/local/tomcat/webapps/
-    #     - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
-    #   ports:
-    #     - '8080:8080'

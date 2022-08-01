@@ -29,6 +29,17 @@ password = earth["pass"]
 day = ''
 
 
+def addStore(file, dd):
+    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>/data/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
+    print(cmd)
+    os.system(cmd)
+
+    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS[&quot;WGS 84&quot;,DATUM[&quot;World Geodetic System 1984&quot;,SPHEROID[&quot;WGS 84&quot;,6378137.0, 298.257223563, AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],PRIMEM[&quot;Greenwich&quot;, 0.0, AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],UNIT[&quot;degree&quot;, 0.017453292519943295],AXIS[&quot;Geodetic longitude&quot;, EAST],AXIS[&quot;Geodetic latitude&quot;, NORTH],AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]</nativeCRS> <srs>EPSG:4326</srs> <latLonBoundingBox><minx>100.23394174088202</minx><maxx>100.38138299027649</maxx><miny>17.745493556046767</miny><maxy>17.994148624037273</maxy><crs>EPSG:4326</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
+
+    print(cmd)
+    os.system(cmd)
+
+
 def removeFile():
     dir = os.listdir("tmp")
     for f in dir:
@@ -44,7 +55,7 @@ def insertZstat(lat, lon, ndvi, f, dd):
     # records = cursor.fetchall()
     # for row in records:
     #     print(row)
-    removeFile()
+    # removeFile()
 
 
 def getPixelValue(ndvi, f, dd):
@@ -74,6 +85,8 @@ def calNdvi(red, nir, f, dd):
     os.system(clip)
     print("clip NDVI")
     getPixelValue(targetClip, f, dd)
+
+    addStore(targetClip, dd)
 
 
 def warpFile(f, dd):
