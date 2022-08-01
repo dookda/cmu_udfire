@@ -86,7 +86,7 @@ def calNdvi(red, nir, f, dd):
     print("clip NDVI")
     getPixelValue(targetClip, f, dd)
 
-    addStore(targetClip, dd)
+    addStore(f[:-4], dd)
 
 
 def warpFile(f, dd):
@@ -160,7 +160,7 @@ def getJSON():
         name = a["name"].split(".")
         if name[2] == 'h27v07':
             print(f'get HDF name: {a["name"]}')
-            getData(doy, a["name"], dd)
+            getData(doy, a["name"], dd.strftime("%d%b%Y"))
 
 
 if __name__ == '__main__':
