@@ -1,3 +1,4 @@
+from math import log
 import os
 # from unicodedata import name
 import psycopg2 as pg2
@@ -126,9 +127,12 @@ def merge():
 
 
 def getJSON():
+    d = 5
     dt = datetime.now()
-    doy = dt.timetuple().tm_yday - 4
-    dd = datetime.today() - timedelta(days=4)
+    doy = dt.timetuple().tm_yday - d
+    dd = datetime.today() - timedelta(days=d)
+
+    print(doy)
 
     if doy < 10:
         doy = "00" + str(doy)
