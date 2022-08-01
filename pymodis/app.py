@@ -147,7 +147,7 @@ def getJSON():
 
 
 if __name__ == '__main__':
-    # getJSON()
+    getJSON()
     schedule.every(120).seconds.do(getJSON)
     # schedule.every().day.at("07:30").do(getJSON)
     while True:
