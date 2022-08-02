@@ -1,5 +1,5 @@
 <coverageStore>
-  <id>CoverageStoreInfoImpl--515de8bd:1825880c3c3:-7ffd</id>
+  <id>CoverageStoreInfoImpl--1808493c:1825890ad76:-7fff</id>
   <name>ndvi_27Jul2022</name>
   <type>GeoTIFF</type>
   <enabled>true</enabled>
@@ -7,6 +7,6 @@
     <id>WorkspaceInfoImpl-79df60d6:182547b9fad:-7fff</id>
   </workspace>
   <__default>false</__default>
-  <dateCreated>2022-08-01 08:33:24.37 UTC</dateCreated>
-  <url>/dataMOD09GA.A2022208.h27v07.061.2022210044555</url>
+  <dateCreated>2022-08-01 08:47:33.780 UTC</dateCreated>
+  <url>/data/MOD09GA.A2022208.h27v07.061.2022210044555</url>
 </coverageStore>
