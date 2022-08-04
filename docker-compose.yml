@@ -32,7 +32,7 @@ services:
   geoserver:
     container_name: pymodis_geoserver
     depends_on:
-      - postgres
+      - postgis
     image: tomcat:8.5.79-jre8
     volumes:
       - ./tomcat/:/usr/local/tomcat/webapps/
