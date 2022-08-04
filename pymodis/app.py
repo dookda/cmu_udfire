@@ -157,7 +157,7 @@ def initLoop():
 
     print(doyEnd)
 
-    for doy in range(200, doyEnd):
+    for doy in range(1, doyEnd):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
