@@ -51,8 +51,13 @@ services:
       #   - "80:80"
       # stdin_open: true
       # tty: true
-      # volumes:
-      # - ./pymodis:/app
-      # command: bash -c "python3 app.py"
-
-    command: [ "./wait-for-it.sh", "geoserver", "python3", "app.py" ]
+    volumes:
+      - ./pymodis:/app/pymodis
+    # command: bash -c "cd pymodis && python3 app.py"
+    command:
+      [
+        "./wait-for-it.sh",
+        "geoserver:8080",
+        "python3",
+        "app.py"
+      ]

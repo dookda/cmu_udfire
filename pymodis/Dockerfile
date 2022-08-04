@@ -1,5 +1,5 @@
 FROM  ubuntu:20.04
-ADD . /app
+
 WORKDIR /app
 
 RUN apt update && apt install -y software-properties-common
@@ -28,4 +28,4 @@ RUN pip install requests
 RUN pip install pymodis
 RUN pip install slugify
 RUN pip install schedule
-CMD ["python3", "app.py"]
+# RUN python3 app.py
