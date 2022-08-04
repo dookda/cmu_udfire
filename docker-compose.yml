@@ -49,8 +49,8 @@ services:
       - geoserver
     # ports:
     #   - "80:80"
-    stdin_open: true
-    tty: true
+    # stdin_open: true
+    # tty: true
     volumes:
       - ./pymodis:/app/pymodis
-    # command: bash -c "cd pymodis && python3 app.py"
+    command: bash -c "python3 app.py"
