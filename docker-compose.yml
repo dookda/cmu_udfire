@@ -54,3 +54,5 @@ services:
       # volumes:
       # - ./pymodis:/app
       # command: bash -c "python3 app.py"
+
+    command: [ "./wait-for-it.sh", "geoserver", "python3", "app.py" ]
