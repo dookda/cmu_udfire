@@ -1,0 +1,49 @@
+<settings>
+  <id>SettingsInfoImpl-10efe787:182619ce6bf:-7fdf</id>
+  <workspace>
+    <id>WorkspaceInfoImpl-79df60d6:182547b9fad:-7fff</id>
+    <name>ndvi</name>
+    <isolated>false</isolated>
+    <dateCreated>2022-07-31 16:19:02.506 UTC</dateCreated>
+    <dateModified>2022-08-03 12:08:30.727 UTC</dateModified>
+  </workspace>
+  <contact>
+    <id>contact</id>
+    <addressCity>Alexandria</addressCity>
+    <addressCountry>Egypt</addressCountry>
+    <addressType>Work</addressType>
+    <contactEmail>sakda.homhuan@gmail.com</contactEmail>
+    <contactOrganization>Geographers</contactOrganization>
+    <contactPerson>sakda homhuan</contactPerson>
+    <contactPosition>Geographer</contactPosition>
+    <internationalAddress class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressCity class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressCountry class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressDeliveryPoint class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressPostalCode class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressState class="org.geotools.util.GrowableInternationalString"/>
+    <internationalAddressType class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactEmail class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactFacsimile class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactOrganization class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactPerson class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactPosition class="org.geotools.util.GrowableInternationalString"/>
+    <internationalContactVoice class="org.geotools.util.GrowableInternationalString"/>
+  </contact>
+  <charset>UTF-8</charset>
+  <numDecimals>8</numDecimals>
+  <onlineResource>http://geoserver.org</onlineResource>
+  <verbose>false</verbose>
+  <verboseExceptions>false</verboseExceptions>
+  <metadata>
+    <map>
+      <entry>
+        <string>quietOnNotFound</string>
+        <boolean>false</boolean>
+      </entry>
+    </map>
+  </metadata>
+  <localWorkspaceIncludesPrefix>false</localWorkspaceIncludesPrefix>
+  <showCreatedTimeColumnsInAdminList>false</showCreatedTimeColumnsInAdminList>
+  <showModifiedTimeColumnsInAdminList>false</showModifiedTimeColumnsInAdminList>
+</settings>

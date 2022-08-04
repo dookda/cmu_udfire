@@ -1,0 +1,17 @@
+<layer>
+  <name>ndvi_23Jul2022</name>
+  <id>LayerInfoImpl--ea76841:1826649f27d:-7fe9</id>
+  <type>RASTER</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--ea76841:1826649f27d:-7fc7</id>
+  </defaultStyle>
+  <resource class="coverage">
+    <id>CoverageInfoImpl--ea76841:1826649f27d:-7fea</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-08-04 01:59:40.514 UTC</dateCreated>
+  <dateModified>2022-08-04 02:37:39.614 UTC</dateModified>
+</layer>

@@ -3,7 +3,7 @@ services:
 
   postgis:
     image: postgis/postgis
-    container_name: postgis_pymodis
+    container_name: pymodis_postgis
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -16,7 +16,7 @@ services:
 
   nodejs:
     image: "node"
-    container_name: nodejs_pymodis
+    container_name: pymodis_nodejs
     working_dir: /app/nodejs
     restart: always
     depends_on:
@@ -30,7 +30,7 @@ services:
     command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
 
   geoserver:
-    container_name: geoserver_pymodis
+    container_name: pymodis_geoserver
     depends_on:
       - postgres
     image: tomcat:8.5.79-jre8

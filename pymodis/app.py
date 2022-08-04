@@ -26,25 +26,30 @@ cursor = pg.cursor()
 # earth explorer
 username = earth["user"]
 password = earth["pass"]
-day = ''
+
+
+def removeFile(folder):
+    dir = os.listdir(folder)
+    for f in dir:
+        os.remove(f'./{folder}/{f}')
+
+    print(f'delete files from {folder}')
 
 
 def addStore(file, dd):
-    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>/data/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
-    print(cmd)
+    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
+    print("add store")
     os.system(cmd)
 
-    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS[&quot;WGS 84&quot;,DATUM[&quot;World Geodetic System 1984&quot;,SPHEROID[&quot;WGS 84&quot;,6378137.0, 298.257223563, AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],PRIMEM[&quot;Greenwich&quot;, 0.0, AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],UNIT[&quot;degree&quot;, 0.017453292519943295],AXIS[&quot;Geodetic longitude&quot;, EAST],AXIS[&quot;Geodetic latitude&quot;, NORTH],AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]</nativeCRS> <srs>EPSG:4326</srs> <latLonBoundingBox><minx>100.23394174088202</minx><maxx>100.38138299027649</maxx><miny>17.745493556046767</miny><maxy>17.994148624037273</maxy><crs>EPSG:4326</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
-
-    print(cmd)
+    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
+    print("publish layer")
     os.system(cmd)
 
-
-def removeFile():
-    dir = os.listdir("tmp")
-    for f in dir:
-        os.remove(f'./tmp/{f}')
-    print('delete files from tmp')
+    removeFile("tmp")
+    removeFile("out")
+    removeFile("ndvi")
+    removeFile("data")
+    print("delete file")
 
 
 def insertZstat(lat, lon, ndvi, f, dd):
@@ -55,7 +60,6 @@ def insertZstat(lat, lon, ndvi, f, dd):
     # records = cursor.fetchall()
     # for row in records:
     #     print(row)
-    # removeFile()
 
 
 def getPixelValue(ndvi, f, dd):
@@ -84,9 +88,9 @@ def calNdvi(red, nir, f, dd):
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip NDVI")
-    getPixelValue(targetClip, f, dd)
+    # getPixelValue(targetClip, f, dd)
 
-    addStore(f[:-4], dd)
+    addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
 
 
 def warpFile(f, dd):
@@ -139,20 +143,18 @@ def merge():
     os.system(cmd)
 
 
-def getJSON():
-    d = 5
-    dt = datetime.now()
-    doy = dt.timetuple().tm_yday - d
-    dd = datetime.today() - timedelta(days=d)
+def getJSON(doy, dd):
+    # doy = dt.timetuple().tm_yday - d
+    # dd = datetime.today() - timedelta(days=d)
 
-    print(doy)
-
-    if doy < 10:
-        doy = "00" + str(doy)
-    elif doy < 100:
-        doy = "0" + str(doy)
+    # if doy < 10:
+    #     doy = "00" + str(doy)
+    # elif doy < 100:
+    #     doy = "0" + str(doy)
 
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}.json"
+
+    print(doy, dd, url)
 
     r = requests.get(url)
     arr = r.json()
@@ -160,13 +162,29 @@ def getJSON():
         name = a["name"].split(".")
         if name[2] == 'h27v07':
             print(f'get HDF name: {a["name"]}')
-            getData(doy, a["name"], dd.strftime("%d%b%Y"))
+            getData(doy, a["name"], dd)
 
 
 if __name__ == '__main__':
-    getJSON()
-    schedule.every(120).seconds.do(getJSON)
+    dt = datetime.now()
+    doyEnd = dt.timetuple().tm_yday - 4
+    year = "2022"
+
+    for doy in range(200, doyEnd):
+        if doy < 10:
+            doy = "00" + str(doy)
+        elif doy < 100:
+            doy = "0" + str(doy)
+        else:
+            doy = str(doy)
+
+        doy.rjust(3 + len(doy), '0')
+        dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%d%b%Y")
+
+        getJSON(doy, dd)
+
+    # schedule.every(120).seconds.do(getJSON)
     # schedule.every().day.at("07:30").do(getJSON)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
