@@ -138,24 +138,9 @@ def getData(doy, dat, dd):
     warpFile(dat, dd)
 
 
-def merge():
-    cmd = "rio merge ./tmp/M*.tif merged.tif"
-    os.system(cmd)
-
-
 def getJSON(doy, dd):
-    # doy = dt.timetuple().tm_yday - d
-    # dd = datetime.today() - timedelta(days=d)
-
-    # if doy < 10:
-    #     doy = "00" + str(doy)
-    # elif doy < 100:
-    #     doy = "0" + str(doy)
-
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}.json"
-
     print(doy, dd, url)
-
     r = requests.get(url)
     arr = r.json()
     for a in arr:
@@ -165,12 +150,14 @@ def getJSON(doy, dd):
             getData(doy, a["name"], dd)
 
 
-if __name__ == '__main__':
+def initLoop():
     dt = datetime.now()
     doyEnd = dt.timetuple().tm_yday - 4
     year = "2022"
 
-    for doy in range(200, doyEnd):
+    print(doyEnd)
+
+    for doy in range(1, doyEnd):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -180,11 +167,31 @@ if __name__ == '__main__':
 
         doy.rjust(3 + len(doy), '0')
         dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%d%b%Y")
-
+        print(doy)
         getJSON(doy, dd)
 
-    # schedule.every(120).seconds.do(getJSON)
+
+def initNow():
+    dt = datetime.now()
+    doy = dt.timetuple().tm_yday - 4
+    year = "2022"
+
+    if doy < 10:
+        doy = "00" + str(doy)
+    elif doy < 100:
+        doy = "0" + str(doy)
+    else:
+        doy = str(doy)
+
+    dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%d%b%Y")
+    print(doy)
+    getJSON(doy, dd)
+
+
+if __name__ == '__main__':
+    # init()
+    schedule.every(60).seconds.do(initNow)
     # schedule.every().day.at("07:30").do(getJSON)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

@@ -1,8 +1,8 @@
 <GeoServerTileLayer>
-  <id>LayerInfoImpl--ea76841:1826649f27d:-7fce</id>
+  <id>LayerInfoImpl--ea76841:1826649f27d:-7f5c</id>
   <enabled>true</enabled>
   <inMemoryCached>true</inMemoryCached>
-  <name>ndvi:ndvi_30Jul2022</name>
+  <name>ndvi:ndvi_31Jul2022</name>
   <mimeFormats>
     <string>image/png</string>
     <string>image/jpeg</string>
@@ -10,25 +10,9 @@
   <gridSubsets>
     <gridSubset>
       <gridSetName>EPSG:4326</gridSetName>
-      <extent>
-        <coords>
-          <double>100.23394174088202</double>
-          <double>17.745493556046767</double>
-          <double>100.38138299027649</double>
-          <double>17.994148624037273</double>
-        </coords>
-      </extent>
     </gridSubset>
     <gridSubset>
       <gridSetName>EPSG:900913</gridSetName>
-      <extent>
-        <coords>
-          <double>1.1157991354797633E7</double>
-          <double>2007780.3925187315</double>
-          <double>1.1174404439602153E7</double>
-          <double>2036863.6628580056</double>
-        </coords>
-      </extent>
     </gridSubset>
   </gridSubsets>
   <metaWidthHeight>
@@ -42,7 +26,7 @@
       <key>STYLES</key>
       <defaultValue></defaultValue>
       <availableStyles class="sorted-set"/>
-      <defaultStyle>ndvi</defaultStyle>
+      <defaultStyle>raster</defaultStyle>
     </styleParameterFilter>
   </parameterFilters>
   <gutter>0</gutter>
