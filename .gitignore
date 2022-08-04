@@ -1,5 +1,4 @@
 #auth
-auth.py
 
 pymodis/data/*.hdf
 pymodis/out/*.tif
