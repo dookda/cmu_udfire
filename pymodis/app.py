@@ -189,9 +189,9 @@ def initNow():
 
 
 if __name__ == '__main__':
-    # init()
-    schedule.every(60).seconds.do(initNow)
+    initLoop()
+    # schedule.every(60).seconds.do(initNow)
     # schedule.every().day.at("07:30").do(getJSON)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
