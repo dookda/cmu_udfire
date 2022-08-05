@@ -166,7 +166,7 @@ def initLoop():
             doy = str(doy)
 
         doy.rjust(3 + len(doy), '0')
-        dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%d%b%Y")
+        dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%Y%m%d")
         print(doy)
         getJSON(doy, dd)
 
