@@ -3,6 +3,8 @@ const app = express.Router();
 const con = require("./db");
 const db = con.db;
 
+const axios = require('axios');
+
 app.get("/api/getdata", (req, res) => {
 
     const sql = `SELECT * FROM ndvi ORDER BY dd DESC`;
@@ -25,5 +27,23 @@ app.get("/api/getdata/:df/:dt", (req, res) => {
         })
     })
 });
+
+app.get("/api/listndvi", (req, res) => {
+    const url = 'http://150.95.80.114:8080/geoserver/rest/layers.json'
+    const AUTH = {
+        username: 'admin',
+        password: 'geoserver'
+    }
+
+    axios.get(
+        url, {
+        auth: AUTH,
+    }).then((response) => {
+        res.status(200).json(response.data)
+    }, (error) => {
+        console.log(error);
+    });
+
+})
 
 module.exports = app;
