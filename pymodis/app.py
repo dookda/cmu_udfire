@@ -183,7 +183,7 @@ def initNow():
     else:
         doy = str(doy)
 
-    dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%d%b%Y")
+    dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%Y%m%d")
     print(doy)
     getJSON(doy, dd)
 
