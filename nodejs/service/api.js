@@ -29,7 +29,7 @@ app.get("/api/getdata/:df/:dt", (req, res) => {
 });
 
 app.get("/api/listndvi", (req, res) => {
-    const url = 'http://geoserver:8080/geoserver/rest/layers.json'
+    const url = 'http://150.95.80.114:8080/geoserver/rest/layers.json'
     const AUTH = {
         username: 'admin',
         password: 'geoserver'
