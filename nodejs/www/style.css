@@ -3,12 +3,35 @@ body {
     box-sizing: 0;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+}
+
 .f-gray {
     color: gray;
 }
 
 #map {
     width: 100%;
-    height: 500px;
+    height: 65vh;
     border-radius: 5px;
+}
+
+
+#chart-container {
+    position: relative;
+    height: 65vh;
+    overflow: hidden;
+}
+
+#chart {
+    position: relative;
+    height: 50vh;
+    overflow: hidden;
+}
+
+.desc {
+    padding: 8px;
+    color: gray;
 }

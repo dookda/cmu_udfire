@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
         integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
         crossorigin="" />
+    <script src="https://fastly.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="./bootstrap.css">
     <link rel="stylesheet" href="./style.css">
@@ -65,34 +66,36 @@
     </nav>
 
     <div class="container">
-        <div class="card text-white bg-light mb-3 mt-3">
+        <div class="card text-white bg-light mb-2 mt-2">
             <div class="card-body f-gray">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-sm-6">
                         <h4 class="card-title">NDVI</h4>
                         <p class="card-text">ระบบติดตามข้อมูล NDVI แบบใกล้เวลาจริง</p>
                     </div>
-                    <div class="col">
+                    <div class="col-sm-6">
                         <div class="form-group">
                             <label for="exampleSelect2" class="form-label">เลือกวันที่</label>
-                            <select class="form-select" id="ndvidate">
-                            </select>
+                            <input class="form-control" type="date" name="" id="ndvidate">
+                            <input type="hidden" id="datefocus">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="card text-white bg-light mb-3 mt-3">
-            <div id="map"></div>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="card text-white bg-light mb-2 mt-2">
+                    <div id="map"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card text-white bg-light mb-2 mt-2" id="chart-container">
+                    <span id="ndvitxt"></span>
+                    <div id="chart"></div>
+                </div>
+            </div>
         </div>
-
-        <div class="card text-white bg-light mb-3 mt-3">
-            <div class="chart"></div>
-        </div>
-
-
-
     </div>
 
 </body>
