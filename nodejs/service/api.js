@@ -46,26 +46,5 @@ app.get("/api/listndvi", (req, res) => {
 
 })
 
-app.get("/api/getndvi/:lat/:lng", (req, res) => {
-    let lyrs = wmsLyr.toString();
-    let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
-    let size = await map.getSize();
-    let bbox = await map.getBounds().toBBoxString();
-    let datefocus = document.getElementById("datefocus").value
-
-    let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
-        "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
-        "&QUERY_LAYERS=" + lyrs +
-        "&LAYERS=" + lyrs +
-        "&Feature_count=300" +
-        "&INFO_FORMAT=application/json" +
-        "&X=" + Math.round(pnt.x) +
-        "&Y=" + Math.round(pnt.y) +
-        "&SRS=EPSG:4326" +
-        "&WIDTH=" + size.x +
-        "&HEIGHT=" + size.y +
-        "&BBOX=" + bbox;
-    // console.log(lyrInfoUrl);
-})
 
 module.exports = app;
