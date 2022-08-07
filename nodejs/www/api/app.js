@@ -194,7 +194,7 @@ map.on("click", async (e) => {
         "&WIDTH=" + size.x +
         "&HEIGHT=" + size.y +
         "&BBOX=" + bbox;
-    // console.log(lyrInfoUrl);
+
     let xAxis = [];
     let series = [];
     await axios.get(lyrInfoUrl).then(async (r) => {

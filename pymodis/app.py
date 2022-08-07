@@ -37,19 +37,22 @@ def removeFile(folder):
 
 
 def addStore(file, dd):
-    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
-    print("add store")
-    os.system(cmd)
+    try:
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
+        print("add store")
+        os.system(cmd)
 
-    cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
-    print("publish layer")
-    os.system(cmd)
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
+        print("publish layer")
+        os.system(cmd)
 
-    removeFile("tmp")
-    removeFile("out")
-    removeFile("ndvi")
-    removeFile("data")
-    print("delete file")
+        removeFile("tmp")
+        removeFile("out")
+        removeFile("ndvi")
+        removeFile("data")
+        print("delete file")
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
 
 
 def insertZstat(lat, lon, ndvi, f, dd):
@@ -141,13 +144,18 @@ def getData(doy, dat, dd):
 def getJSON(doy, dd):
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}.json"
     print(doy, dd, url)
-    r = requests.get(url)
-    arr = r.json()
-    for a in arr:
-        name = a["name"].split(".")
-        if name[2] == 'h27v07':
-            print(f'get HDF name: {a["name"]}')
-            getData(doy, a["name"], dd)
+
+    try:
+        r = requests.get(url)
+        # r.raise_for_status()
+        arr = r.json()
+        for a in arr:
+            name = a["name"].split(".")
+            if name[2] == 'h27v07':
+                print(f'get HDF name: {a["name"]}')
+                getData(doy, a["name"], dd)
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
 
 
 def initLoop():
@@ -173,7 +181,7 @@ def initLoop():
 
 def initNow():
     dt = datetime.now()
-    doy = dt.timetuple().tm_yday - 4
+    doy = dt.timetuple().tm_yday - 2
     year = "2022"
 
     if doy < 10:
@@ -189,9 +197,10 @@ def initNow():
 
 
 if __name__ == '__main__':
-    initLoop()
-    # schedule.every(60).seconds.do(initNow)
-    # schedule.every().day.at("07:30").do(getJSON)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    initNow()
+    # initLoop()
+    schedule.every(12).hour.do(initNow)
+    # schedule.every().day.at("07:30").do(initNow)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

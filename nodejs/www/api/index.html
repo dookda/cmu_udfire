@@ -32,15 +32,13 @@
             <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home
-                            <span class="visually-hidden">(current)</span>
-                        </a>
+                        <a class="nav-link " href="./../index.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="http://150.95.80.114:8080/geoserver/">Geoserver</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./api/index.html">API</a>
+                        <a class="nav-link active" href="#">API</a>
                     </li>
 
                 </ul>
@@ -53,33 +51,26 @@
     </nav>
 
     <div class="container">
-        <div class="card text-white bg-light mb-2 mt-2">
-            <div class="card-body f-gray">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h4 class="card-title">NDVI</h4>
-                        <p class="card-text">ระบบติดตามข้อมูล NDVI แบบใกล้เวลาจริง</p>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="exampleSelect2" class="form-label">เลือกวันที่</label>
-                            <input class="form-control" type="date" name="" id="ndvidate">
-                            <input type="hidden" id="datefocus">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-12">
                 <div class="card text-white bg-light mb-2 mt-2">
-                    <div id="map"></div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card text-white bg-light mb-2 mt-2" id="chart-container">
-                    <span id="ndvitxt"></span>
-                    <div id="chart"></div>
+                    <div id="map">
+                        <label class="f-gray">
+                            http://150.95.80.114:8080/geoserver/wms?SERVICE=WMS
+                            <br>&VERSION=1.1.1
+                            <br>&REQUEST=GetFeatureInfo
+                            <br>&QUERY_LAYERS=ndvi:ndvi_20220804
+                            <br>&LAYERS=ndvi:ndvi_20220804
+                            <br>&Feature_count=300
+                            <br>&INFO_FORMAT=application/json
+                            <br>&X=318
+                            <br>&Y=246
+                            <br>&SRS=EPSG:4326
+                            <br>&WIDTH=614
+                            <br>&HEIGHT=534
+                            <br>&BBOX=100.1012420654297,17.694399492737773,100.52284240722656,18.043379866339688
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,6 +84,6 @@
 <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
     integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
     crossorigin=""></script>
-<script src="./app.js"></script>
+<!-- <script src="./app.js"></script> -->
 
 </html>
