@@ -29,6 +29,7 @@ body {
     position: relative;
     height: 50vh;
     overflow: hidden;
+    padding: 5px;
 }
 
 .desc {
