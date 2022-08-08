@@ -143,7 +143,12 @@ var echart = echarts.init(dom, null, {
 // };
 
 var option = {
-
+    grid: {
+        top: '10%',
+        bottom: '10%',
+        left: '15%',
+        right: '5%',
+    },
     xAxis: {
         type: 'category',
         name: 'Date',
@@ -216,6 +221,7 @@ map.on("click", async (e) => {
                 yAxis: {
                     type: 'value',
                     max: 1,
+                    min: -1,
                 },
                 series: [
                     {
