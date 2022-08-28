@@ -80,12 +80,33 @@ def getPixelValue(ndvi, f, dd):
 
 def calNdvi(red, nir, f, dd):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
+    # VCI NDWI NDVI
 
+    target = f"./vci/{f[:-4]}_500m_32647_vci.tif"
+    target = f"./ndwi/{f[:-4]}_500m_32647_ndwi.tif"
     target = f"./ndvi/{f[:-4]}_500m_32647_ndvi.tif"
     # --NoDataValue=0
     exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
+    print("generate VCI")
+
+    exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
+    os.system(exp)
+    print("generate NDWI")
+
+    exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
+    os.system(exp)
     print("generate NDVI")
+
+    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_vci_clip.tif"
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    os.system(clip)
+    print("clip VCI")
+
+    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndwi_clip.tif"
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    os.system(clip)
+    print("clip NDWI")
 
     targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndvi_clip.tif"
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
