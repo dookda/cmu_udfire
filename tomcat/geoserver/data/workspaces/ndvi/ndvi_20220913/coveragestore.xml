@@ -1,0 +1,12 @@
+<coverageStore>
+  <id>CoverageStoreInfoImpl--7114e429:183434dce41:-7fff</id>
+  <name>ndvi_20220913</name>
+  <type>GeoTIFF</type>
+  <enabled>true</enabled>
+  <workspace>
+    <id>WorkspaceInfoImpl-79df60d6:182547b9fad:-7fff</id>
+  </workspace>
+  <__default>false</__default>
+  <dateCreated>2022-09-15 22:56:55.316 UTC</dateCreated>
+  <url>ndvi_clip/MOD09GA.A2022256.h27v07.061.2022258051017_500m_32647_ndvi_clip.tif</url>
+</coverageStore>

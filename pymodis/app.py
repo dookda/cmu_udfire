@@ -18,10 +18,10 @@ db = conn["dbName"]
 username = conn["dbUser"]
 password = conn["dbPass"]
 port = conn["dbPort"]
-pg = pg2.connect(database=db, user=username,
-                 password=password, host=host, port=port)
-pg.autocommit = True
-cursor = pg.cursor()
+# pg = pg2.connect(database=db, user=username,
+#                  password=password, host=host, port=port)
+# pg.autocommit = True
+# cursor = pg.cursor()
 
 # earth explorer
 username = earth["user"]
@@ -78,43 +78,58 @@ def getPixelValue(ndvi, f, dd):
         insertZstat(i[0], i[1], res, f, dd)
 
 
+def calNdmi(nir, swir, f, dd):
+    # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
+
+    target = f"./ndmi/{f[:-4]}_500m_32647_ndmi.tif"
+    # --NoDataValue=0
+    exp = f'gdal_calc.py -A {nir} -B {swir} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
+    os.system(exp)
+    print("generate NDMI")
+
+    targetClip = f"./ndmi_clip/{f[:-4]}_500m_32647_ndmi_clip.tif"
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    os.system(clip)
+    print("clip NDMI")
+
+    # getPixelValue(targetClip, f, dd)
+    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+
+
+def calNdwi(green, nir, f, dd):
+    # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
+
+    target = f"./ndwi/{f[:-4]}_500m_32647_ndwi.tif"
+    # --NoDataValue=0
+    exp = f'gdal_calc.py -A {green} -B {nir} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
+    os.system(exp)
+    print("generate NDWI")
+
+    targetClip = f"./ndwi_clip/{f[:-4]}_500m_32647_ndwi_clip.tif"
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    os.system(clip)
+    print("clip NDWI")
+
+    # getPixelValue(targetClip, f, dd)
+    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+
+
 def calNdvi(red, nir, f, dd):
     # https://lpdaac.usgs.gov/documents/306/MOD09_User_Guide_V6.pdf
-    # VCI NDWI NDVI
 
-    target = f"./vci/{f[:-4]}_500m_32647_vci.tif"
-    target = f"./ndwi/{f[:-4]}_500m_32647_ndwi.tif"
     target = f"./ndvi/{f[:-4]}_500m_32647_ndvi.tif"
     # --NoDataValue=0
     exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
-    print("generate VCI")
-
-    exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
-    os.system(exp)
-    print("generate NDWI")
-
-    exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
-    os.system(exp)
     print("generate NDVI")
-
-    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_vci_clip.tif"
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
-    os.system(clip)
-    print("clip VCI")
-
-    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndwi_clip.tif"
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
-    os.system(clip)
-    print("clip NDWI")
 
     targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndvi_clip.tif"
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip NDVI")
-    # getPixelValue(targetClip, f, dd)
 
-    addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+    # getPixelValue(targetClip, f, dd)
+    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
 
 
 def warpFile(f, dd):
@@ -129,7 +144,7 @@ def warpFile(f, dd):
         kwargs = {'format': 'GTiff', 'dstSRS': 'EPSG:32647'}
         ds = gdal.Warp(destNameOrDestDS=f'{out_tmp}{j}.tif',
                        srcDSOrSrcDSTab=subdataset, **kwargs)
-        del ds
+        # del ds
         j += 1
         print(dataset.GetSubDatasets()[i][0])
 
@@ -151,6 +166,8 @@ def warpFile(f, dd):
     print("translate HDF")
 
     calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f, dd)
+    calNdmi(f'{out_tmp}2.tif', f'{out_tmp}6.tif', f, dd)
+    calNdwi(f'{out_tmp}4.tif', f'{out_tmp}2.tif', f, dd)
 
 
 def getData(doy, dat, dd):
@@ -202,7 +219,7 @@ def initLoop():
 
 def initNow():
     dt = datetime.now()
-    doy = dt.timetuple().tm_yday - 2
+    doy = dt.timetuple().tm_yday - 3
     year = "2022"
 
     if doy < 10:
@@ -220,8 +237,8 @@ def initNow():
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    schedule.every(12).hours.do(initNow)
+    # schedule.every(12).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)

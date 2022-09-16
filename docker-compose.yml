@@ -49,4 +49,4 @@ services:
       - geoserver
     volumes:
       - ./pymodis:/app/pymodis
-    command: bash -c "cd pymodis && python3 app.py"
+    # command: bash -c "cd pymodis && python3 app.py"
