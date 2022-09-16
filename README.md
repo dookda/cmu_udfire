@@ -20,7 +20,7 @@ docker build --tag pymodis .
 
 docker run
 ```
-docker run --rm -it --name pmodis -v $(pwd)/pymodis:/app/pymodis -v $(pwd)/flaskapi:/app/flaskapi -p 3200:3200 pymodis bash
+docker run --rm -it --name pmodis -v $(pwd)/pymodis:/app/pymodis -v $(pwd)/flaskapi:/app/flaskapi -p 3200:3200 cmu_udfire-pymodis bash
 ```
 
 docker login & logout

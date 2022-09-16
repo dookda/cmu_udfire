@@ -36,20 +36,28 @@ def removeFile(folder):
     print(f'delete files from {folder}')
 
 
-def addStore(file, dd):
+def addStore(file, indx, dd):
     try:
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
+        # cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
+        # print("add store")
+        # os.system(cmd)
+
+        # cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
+        # print("publish layer")
+        # os.system(cmd)
+
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>{indx}_{dd}</name> <workspace>indx</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>{indx}_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores?configure=all' "
         print("add store")
         os.system(cmd)
 
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
         print("publish layer")
         os.system(cmd)
 
-        removeFile("tmp")
-        removeFile("out")
-        removeFile("ndvi")
-        removeFile("data")
+        # removeFile("tmp")
+        # removeFile("out")
+        # removeFile("ndvi")
+        # removeFile("data")
         print("delete file")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
@@ -93,7 +101,7 @@ def calNdmi(nir, swir, f, dd):
     print("clip NDMI")
 
     # getPixelValue(targetClip, f, dd)
-    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+    addStore(f'{f[:-4]}_500m_32647_ndmi_clip.tif', 'ndmi', dd)
 
 
 def calNdwi(green, nir, f, dd):
@@ -111,7 +119,7 @@ def calNdwi(green, nir, f, dd):
     print("clip NDWI")
 
     # getPixelValue(targetClip, f, dd)
-    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+    addStore(f'{f[:-4]}_500m_32647_ndwi_clip.tif', 'ndwi', dd)
 
 
 def calNdvi(red, nir, f, dd):
@@ -129,7 +137,7 @@ def calNdvi(red, nir, f, dd):
     print("clip NDVI")
 
     # getPixelValue(targetClip, f, dd)
-    # addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', dd)
+    addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', 'ndvi', dd)
 
 
 def warpFile(f, dd):
@@ -237,8 +245,8 @@ def initNow():
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    # schedule.every(12).hours.do(initNow)
+    schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

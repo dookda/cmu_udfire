@@ -38,6 +38,8 @@ services:
       - ./tomcat/:/usr/local/tomcat/webapps/
       - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
       - ./pymodis/ndvi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndvi_clip/
+      - ./pymodis/ndwi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndwi_clip/
+      - ./pymodis/ndmi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndmi_clip/
     ports:
       - '8080:8080'
 
@@ -49,4 +51,4 @@ services:
       - geoserver
     volumes:
       - ./pymodis:/app/pymodis
-    # command: bash -c "cd pymodis && python3 app.py"
+    command: bash -c "cd pymodis && python3 app.py"
