@@ -12,6 +12,23 @@ docker run
 docker exec -it pymodis bash
 ```
 
+To start an existing container which is stopped
+```
+docker start <container-name/ID>
+```
+To stop a running container
+```
+docker stop <container-name/ID>
+```
+Then to login to the interactive shell of a container
+```
+docker exec -it <container-name/ID> bash
+```
+To start an existing container and attach to it in one command
+```
+docker start -ai <container-name/ID>
+```
+
 
 docker build
 ```
