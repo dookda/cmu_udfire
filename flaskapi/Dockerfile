@@ -17,10 +17,10 @@ RUN apt update && apt-get install wget -y
 RUN apt update && apt install curl -y
 
 # Install pip reqs
-# RUN pip install flask
+RUN pip install flask
 RUN pip install numpy
 RUN pip install GDAL
-# RUN pip install -U flask-cors
+RUN pip install -U flask-cors
 RUN pip install rasterio
 RUN pip install psycopg2
 RUN pip install rasterstats

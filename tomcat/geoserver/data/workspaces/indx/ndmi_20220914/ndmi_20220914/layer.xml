@@ -1,0 +1,16 @@
+<layer>
+  <name>ndmi_20220914</name>
+  <id>LayerInfoImpl--1bb452c3:1834bb03d3c:-7ffa</id>
+  <type>RASTER</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--570ae188:124761b8d78:-7fe2</id>
+  </defaultStyle>
+  <resource class="coverage">
+    <id>CoverageInfoImpl--1bb452c3:1834bb03d3c:-7ffb</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-09-17 14:06:19.889 UTC</dateCreated>
+</layer>

@@ -18,10 +18,10 @@ db = conn["dbName"]
 username = conn["dbUser"]
 password = conn["dbPass"]
 port = conn["dbPort"]
-# pg = pg2.connect(database=db, user=username,
-#                  password=password, host=host, port=port)
-# pg.autocommit = True
-# cursor = pg.cursor()
+pg = pg2.connect(database=db, user=username,
+                 password=password, host=host, port=port)
+pg.autocommit = True
+cursor = pg.cursor()
 
 # earth explorer
 username = earth["user"]
@@ -38,20 +38,12 @@ def removeFile(folder):
 
 def addStore(file, indx, dd):
     try:
-        # cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>ndvi_{dd}</name> <workspace>ndvi</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>ndvi_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores?configure=all' "
-        # print("add store")
-        # os.system(cmd)
-
-        # cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>ndvi_{dd}</name> <title>ndvi_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/ndvi/coveragestores/ndvi_{dd}/coverages'"
-        # print("publish layer")
-        # os.system(cmd)
-
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>{indx}_{dd}</name> <workspace>indx</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>{indx}_clip/{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores?configure=all' "
-        print("add store")
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>{indx}_{dd}</name> <workspace>indx</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores?configure=all' "
+        print(cmd, "add store")
         os.system(cmd)
 
         cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
-        print("publish layer")
+        print(cmd, "publish layer")
         os.system(cmd)
 
         # removeFile("tmp")
@@ -94,14 +86,13 @@ def calNdmi(nir, swir, f, dd):
     exp = f'gdal_calc.py -A {nir} -B {swir} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
     print("generate NDMI")
-
-    targetClip = f"./ndmi_clip/{f[:-4]}_500m_32647_ndmi_clip.tif"
+    targetClip = f'./ndmi_clip/_{dd}_500m_32647_ndmi_clip.tif'
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip NDMI")
 
     # getPixelValue(targetClip, f, dd)
-    addStore(f'{f[:-4]}_500m_32647_ndmi_clip.tif', 'ndmi', dd)
+    addStore(targetClip, 'ndmi', dd)
 
 
 def calNdwi(green, nir, f, dd):
@@ -112,14 +103,13 @@ def calNdwi(green, nir, f, dd):
     exp = f'gdal_calc.py -A {green} -B {nir} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
     print("generate NDWI")
-
-    targetClip = f"./ndwi_clip/{f[:-4]}_500m_32647_ndwi_clip.tif"
+    targetClip = f'./ndwi_clip/_{dd}_500m_32647_ndwi_clip.tif'
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip NDWI")
 
     # getPixelValue(targetClip, f, dd)
-    addStore(f'{f[:-4]}_500m_32647_ndwi_clip.tif', 'ndwi', dd)
+    addStore(targetClip, 'ndwi', dd)
 
 
 def calNdvi(red, nir, f, dd):
@@ -130,14 +120,13 @@ def calNdvi(red, nir, f, dd):
     exp = f'gdal_calc.py -A {nir} -B {red} --calc="((A-B)/(A+B))" --outfile={target} --type=Float32 --overwrite --NoDataValue=1.001'
     os.system(exp)
     print("generate NDVI")
-
-    targetClip = f"./ndvi_clip/{f[:-4]}_500m_32647_ndvi_clip.tif"
+    targetClip = f'./ndvi_clip/_{dd}_500m_32647_ndvi_clip.tif'
     clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
     os.system(clip)
     print("clip NDVI")
 
     # getPixelValue(targetClip, f, dd)
-    addStore(f'{f[:-4]}_500m_32647_ndvi_clip.tif', 'ndvi', dd)
+    addStore(targetClip, 'ndvi', dd)
 
 
 def warpFile(f, dd):
@@ -207,7 +196,7 @@ def getJSON(doy, dd):
 def initLoop():
     dt = datetime.now()
     doyEnd = dt.timetuple().tm_yday - 4
-    year = "2022"
+    year = date.today().year
 
     print(doyEnd)
 
@@ -228,7 +217,7 @@ def initLoop():
 def initNow():
     dt = datetime.now()
     doy = dt.timetuple().tm_yday - 3
-    year = "2022"
+    year = date.today().year
 
     if doy < 10:
         doy = "00" + str(doy)
@@ -237,16 +226,16 @@ def initNow():
     else:
         doy = str(doy)
 
-    dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%Y%m%d")
-    print(doy)
+    dd = datetime.strptime(str(year) + "-" + doy, "%Y-%j").strftime("%Y%m%d")
+    print(doy, dd)
     getJSON(doy, dd)
 
 
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    schedule.every(24).hours.do(initNow)
+    # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)

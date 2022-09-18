@@ -52,3 +52,19 @@ services:
     volumes:
       - ./pymodis:/app/pymodis
     command: bash -c "cd pymodis && python3 app.py"
+
+  flask:
+    container_name: pymodis_flask
+    build: ./flaskapi
+    restart: always
+    depends_on:
+      - postgis
+      - geoserver
+    volumes:
+      - ./flaskapi:/app/flaskapi
+      - ./pymodis/ndvi_clip/:/app/flaskapi/ndvi_clip/
+      - ./pymodis/ndwi_clip/:/app/flaskapi/ndwi_clip/
+      - ./pymodis/ndmi_clip/:/app/flaskapi/ndmi_clip/
+    ports:
+      - "3100:3100"
+    command: bash -c "cd flaskapi && python3 app.py"
