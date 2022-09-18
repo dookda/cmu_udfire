@@ -48,10 +48,8 @@ def addStore(file, indx, dd):
 
         removeFile("tmp")
         removeFile("out")
-        removeFile("ndvi")
-        removeFile("ndwi")
-        removeFile("ndmi")
         removeFile("data")
+        removeFile(indx)
         print("delete file")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
