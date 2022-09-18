@@ -203,7 +203,7 @@ def initLoop():
 
     print(doyEnd)
 
-    for doy in range(1, doyEnd + 1):
+    for doy in range(256, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -236,8 +236,8 @@ def initNow():
 
 
 if __name__ == '__main__':
-    # initNow()
-    initLoop()
+    initNow()
+    # initLoop()
     # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
     # while True:

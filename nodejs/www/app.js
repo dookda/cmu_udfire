@@ -20,15 +20,27 @@ const CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}
 
 const grod = L.tileLayer('https://{s}.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
     maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    lyr: 'basemap',
+    zIndex: 0
 });
 
 const ghyb = L.tileLayer('https://{s}.google.com/vt/lyrs=y,m&x={x}&y={y}&z={z}', {
     maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    lyr: 'basemap',
+    zIndex: 0
 });
 
-var prov = L.tileLayer.wms("https://rti2dss.com/geoserver/th/wms?", {
+const gter = L.tileLayer('https://{s}.google.com/vt/lyrs=t,m&x={x}&y={y}&z={z}', {
+    name: "base",
+    maxZoom: 20,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    lyr: 'basemap',
+    zIndex: 0
+});
+
+const prov = L.tileLayer.wms("https://rti2dss.com/geoserver/th/wms?", {
     layers: 'th:province_4326',
     format: 'image/png',
     transparent: true,
@@ -53,52 +65,64 @@ const baseMap = {
     "OSM": osm,
     "แผนที่ CartoDB": CartoDB.addTo(map),
     "แผนที่ถนน": grod,
-    "แผนที่ภาพถ่าย": ghyb
+    "แผนที่ภาพถ่าย": ghyb,
+    "แผนที่ภูมิประเทศ": gter
 }
 
 const overlayMap = {
-    "ขอบจังหวัด": prov,
-    "ขอบอำเภอ": amp.addTo(map),
-    "ขอบตำบล": tam.addTo(map)
+    // "ขอบจังหวัด": prov,
+    // "ขอบอำเภอ": amp.addTo(map),
+    // "ขอบตำบล": tam.addTo(map)
 }
 
 L.control.layers(baseMap, overlayMap).addTo(map);
 
 let wmsList = [];
-axios.get('/api/listndvi').then((res) => {
-    res.data.layers.layer.forEach(i => {
-        wmsList.push(i.name);
-    });
-});
+// axios.get('/api/listndvi').then((res) => {
+//     console.log(res);
+//     res.data.layers.layer.forEach(i => {
+//         wmsList.push(i.name);
+//     });
+// });
 
 let wmsLyr = [];
 const addLayer = async (e) => {
+
+    let indx = document.querySelector('input[name="indx"]:checked').value;
+    let ndviItem = document.getElementById('ndvidate');
+
     wmsLyr = [];
-    document.getElementById("datefocus").value = e.target.value;
-    let dtxt = "ndvi_" + e.target.value.replace("-", "").replace("-", "");
-    wmsLyr.push(`ndvi:${dtxt}`)
+    document.getElementById("datefocus").value = ndviItem.value;
+
+
+
+    let dtxt = "indx:" + indx + "_" + ndviItem.value.replace("-", "").replace("-", "");
+    console.log(dtxt);
+    wmsLyr.push(dtxt)
     await map.eachLayer(i => {
-        if (i.options.name == "ndvi") {
+        if (i.options.name == "indx") {
             map.removeLayer(i)
         }
     })
-
+    // console.log(dtxt);
     let lyr = await L.tileLayer.wms(geoserver + "/wms?", {
-        layers: 'ndvi:' + dtxt,
+        layers: dtxt,
         format: "image/png",
         transparent: true,
         styles: "ndvi",
-        zIndex: 3,
-        name: "ndvi"
+        opacity: 0.8,
+        zIndex: 6,
+        name: "indx"
     })
 
-    if (wmsList.includes(wmsLyr[0])) {
-        lyr.addTo(map)
-    }
+    lyr.addTo(map)
+    // if (wmsList.includes(wmsLyr[0])) {
+    //     lyr.addTo(map)
+    // }
 }
 
-let ndviItem = document.getElementById('ndvidate');
-ndviItem.onchange = addLayer;
+
+// ndviItem.onchange = addLayer;
 
 var dom = document.getElementById('chart');
 var echart = echarts.init(dom, null, {
@@ -182,6 +206,7 @@ window.addEventListener('resize', echart.resize);
 
 map.on("click", async (e) => {
     let lyrs = wmsLyr.toString();
+    // console.log(lyrs);
     let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
     let size = await map.getSize();
     let bbox = await map.getBounds().toBBoxString();
