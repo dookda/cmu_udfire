@@ -211,6 +211,7 @@ map.on("click", async (e) => {
     let size = await map.getSize();
     let bbox = await map.getBounds().toBBoxString();
     let datefocus = document.getElementById("datefocus").value
+    let indx = document.querySelector('input[name="indx"]:checked').value;
 
     let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
         "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
@@ -232,7 +233,7 @@ map.on("click", async (e) => {
             r.data.features.map(async (i, k) => {
                 document.getElementById("ndvitxt").innerHTML = `<div class="desc">lat: ${e.latlng.lat} 
                 <br>lon: ${e.latlng.lng}
-                <br>NDVI: ${i.properties.GRAY_INDEX.toFixed(3)} 
+                <br>${indx}: ${i.properties.GRAY_INDEX.toFixed(3)} 
                 <br>วันที่: ${datefocus}`;
                 xAxis.push(k);
                 series.push(i.properties.GRAY_INDEX.toFixed(3));
