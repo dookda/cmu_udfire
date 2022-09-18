@@ -17,7 +17,7 @@
         crossorigin="" />
     <script src="https://fastly.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="./bootstrap.css">
+    <link rel="stylesheet" href="./../bootstrap.css">
     <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -51,28 +51,31 @@
     </nav>
 
     <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card text-white bg-light mb-2 mt-2">
-                    <div id="map">
-                        <label class="f-gray">
-                            http://150.95.80.114:8080/geoserver/wms?SERVICE=WMS
-                            <br>&VERSION=1.1.1
-                            <br>&REQUEST=GetFeatureInfo
-                            <br>&QUERY_LAYERS=ndvi:ndvi_20220804
-                            <br>&LAYERS=ndvi:ndvi_20220804
-                            <br>&Feature_count=300
-                            <br>&INFO_FORMAT=application/json
-                            <br>&X=318
-                            <br>&Y=246
-                            <br>&SRS=EPSG:4326
-                            <br>&WIDTH=614
-                            <br>&HEIGHT=534
-                            <br>&BBOX=100.1012420654297,17.694399492737773,100.52284240722656,18.043379866339688
-                        </label>
-                    </div>
-                </div>
-            </div>
+        <div class="shadow-none p-3 mt-3 bg-light rounded">
+            <p>GetFeatureInfo</p>
+
+            http://150.95.80.114:8080/geoserver/wms?SERVICE=WMS
+            <br>&VERSION=1.1.1
+            <br>&REQUEST=GetFeatureInfo
+            <br>&QUERY_LAYERS=ndvi:ndvi_20220804
+            <br>&LAYERS=ndvi:ndvi_20220804
+            <br>&Feature_count=300
+            <br>&INFO_FORMAT=application/json
+            <br>&X=318
+            <br>&Y=246
+            <br>&SRS=EPSG:4326
+            <br>&WIDTH=614
+            <br>&HEIGHT=534
+            <br>&BBOX=100.1012420654297,17.694399492737773,100.52284240722656,18.043379866339688
+        </div>
+        <div class="shadow-none p-3 mt-3 bg-light rounded">
+            <p>getpixelvalue</p>
+
+            http://150.95.80.114:3180/getpixelvalue/[string:index]/[string:yyyymmdd]/[float:latitude]/[float:longitude]
+            <br>index = ndvi, ndwi, ndmi
+            <br>yyyymmdd เช่น 20220804
+            <br>latitude (float) เช่น 17.9413
+            <br>longitude (float) เช่น 100.3276
         </div>
     </div>
 
