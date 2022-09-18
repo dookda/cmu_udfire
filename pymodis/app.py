@@ -46,12 +46,12 @@ def addStore(file, indx, dd):
         print(cmd, "publish layer")
         os.system(cmd)
 
-        removeFile("tmp")
-        removeFile("out")
-        removeFile("ndvi")
-        removeFile("ndwi")
-        removeFile("ndmi")
-        removeFile("data")
+        # removeFile("tmp")
+        # removeFile("out")
+        # removeFile("ndvi")
+        # removeFile("ndwi")
+        # removeFile("ndmi")
+        # removeFile("data")
         print("delete file")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
