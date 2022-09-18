@@ -46,10 +46,12 @@ def addStore(file, indx, dd):
         print(cmd, "publish layer")
         os.system(cmd)
 
-        # removeFile("tmp")
-        # removeFile("out")
-        # removeFile("ndvi")
-        # removeFile("data")
+        removeFile("tmp")
+        removeFile("out")
+        removeFile("ndvi")
+        removeFile("ndwi")
+        removeFile("ndmi")
+        removeFile("data")
         print("delete file")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
@@ -195,12 +197,12 @@ def getJSON(doy, dd):
 
 def initLoop():
     dt = datetime.now()
-    doyEnd = dt.timetuple().tm_yday - 4
+    doyEnd = dt.timetuple().tm_yday - 3
     year = date.today().year
 
     print(doyEnd)
 
-    for doy in range(1, doyEnd):
+    for doy in range(256, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -209,8 +211,9 @@ def initLoop():
             doy = str(doy)
 
         doy.rjust(3 + len(doy), '0')
-        dd = datetime.strptime(year + "-" + doy, "%Y-%j").strftime("%Y%m%d")
-        print(doy)
+        dd = datetime.strptime(str(year) + "-" + doy,
+                               "%Y-%j").strftime("%Y%m%d")
+        print(doy, dd)
         getJSON(doy, dd)
 
 
@@ -232,8 +235,8 @@ def initNow():
 
 
 if __name__ == '__main__':
-    initNow()
-    # initLoop()
+    # initNow()
+    initLoop()
     # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
     # while True:
