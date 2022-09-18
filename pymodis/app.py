@@ -46,11 +46,6 @@ def addStore(file, indx, dd):
         print(cmd, "publish layer")
         os.system(cmd)
 
-        removeFile("tmp")
-        removeFile("out")
-        removeFile("data")
-        removeFile(indx)
-        print("delete file")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
 
@@ -166,6 +161,14 @@ def warpFile(f, dd):
     calNdmi(f'{out_tmp}2.tif', f'{out_tmp}6.tif', f, dd)
     calNdwi(f'{out_tmp}4.tif', f'{out_tmp}2.tif', f, dd)
 
+    removeFile("tmp")
+    removeFile("out")
+    removeFile("data")
+    removeFile("ndvi")
+    removeFile("ndwi")
+    removeFile("ndmi")
+    print("delete file")
+
 
 def getData(doy, dat, dd):
     out = f"./data/{dat}"
@@ -200,7 +203,7 @@ def initLoop():
 
     print(doyEnd)
 
-    for doy in range(256, doyEnd + 1):
+    for doy in range(257, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
