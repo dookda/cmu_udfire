@@ -233,14 +233,14 @@ def initNow():
 
     dd = datetime.strptime(str(year) + "-" + doy, "%Y-%j").strftime("%Y%m%d")
     print(doy, dd, year)
-    getJSON(doy, dd, year)
+    # getJSON(doy, dd, year)
 
 
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    schedule.every(24).hours.do(initNow)
+    # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)

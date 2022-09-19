@@ -2,6 +2,10 @@ FROM  ubuntu:20.04
 
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -yq tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 RUN apt update && apt install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt update && apt install -y python3 python3-pip
