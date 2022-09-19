@@ -170,9 +170,9 @@ def warpFile(f, dd):
     print("delete file")
 
 
-def getData(doy, dat, dd):
+def getData(doy, dat, dd, year):
     out = f"./data/{dat}"
-    url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}/{dat}'
+    url = f'https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/{year}/{doy}/{dat}'
     mod = f"wget -e robots=off -m -np -R .html,.tmp -nH --cut-dirs=3 '{url}' --header 'Authorization: Bearer {token}' -O {out}"
     os.system(mod)
     print('download MODIS HDF')
@@ -191,7 +191,7 @@ def getJSON(doy, dd, year):
             name = a["name"].split(".")
             if name[2] == 'h27v07':
                 print(f'get HDF name: {a["name"]}')
-                getData(doy, a["name"], dd)
+                getData(doy, a["name"], dd, year)
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
 
@@ -222,7 +222,7 @@ def initLoop():
 def initNow():
     dt = datetime.now()
     doy = dt.timetuple().tm_yday
-    doy -= 5
+    doy -= 4
     year = date.today().year
     if doy < 10:
         doy = "00" + str(doy)
@@ -239,8 +239,8 @@ def initNow():
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    # schedule.every(24).hours.do(initNow)
+    schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
