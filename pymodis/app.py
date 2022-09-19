@@ -179,8 +179,8 @@ def getData(doy, dat, dd):
     warpFile(dat, dd)
 
 
-def getJSON(doy, dd):
-    url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/2022/{doy}.json"
+def getJSON(doy, dd, year):
+    url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/{year}/{doy}.json"
     print(doy, dd, url)
 
     try:
@@ -198,7 +198,8 @@ def getJSON(doy, dd):
 
 def initLoop():
     dt = datetime.now()
-    doyEnd = dt.timetuple().tm_yday - 3
+    doyEnd = dt.timetuple().tm_yday
+    doy -= 4
     year = date.today().year
 
     print(doyEnd)
@@ -215,14 +216,14 @@ def initLoop():
         dd = datetime.strptime(str(year) + "-" + doy,
                                "%Y-%j").strftime("%Y%m%d")
         print(doy, dd)
-        getJSON(doy, dd)
+        getJSON(doy, dd, year)
 
 
 def initNow():
     dt = datetime.now()
-    doy = dt.timetuple().tm_yday - 3
+    doy = dt.timetuple().tm_yday
+    doy -= 5
     year = date.today().year
-
     if doy < 10:
         doy = "00" + str(doy)
     elif doy < 100:
@@ -231,15 +232,15 @@ def initNow():
         doy = str(doy)
 
     dd = datetime.strptime(str(year) + "-" + doy, "%Y-%j").strftime("%Y%m%d")
-    print(doy, dd)
-    getJSON(doy, dd)
+    print(doy, dd, year)
+    getJSON(doy, dd, year)
 
 
 if __name__ == '__main__':
     initNow()
     # initLoop()
-    schedule.every(24).hours.do(initNow)
+    # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
