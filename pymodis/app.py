@@ -233,7 +233,7 @@ def initNow():
 
     dd = datetime.strptime(str(year) + "-" + doy, "%Y-%j").strftime("%Y%m%d")
     print(doy, dd, year)
-    # getJSON(doy, dd, year)
+    getJSON(doy, dd, year)
 
 
 if __name__ == '__main__':

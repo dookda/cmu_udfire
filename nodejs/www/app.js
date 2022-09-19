@@ -86,15 +86,15 @@ let wmsList = [];
 // });
 
 let wmsLyr = [];
-const addLayer = async (e) => {
+const addLayer = async () => {
 
     let indx = document.querySelector('input[name="indx"]:checked').value;
     let ndviItem = document.getElementById('ndvidate');
+    let range = document.getElementById('range').value;
+    // console.log(range);
 
     wmsLyr = [];
     document.getElementById("datefocus").value = ndviItem.value;
-
-
 
     let dtxt = "indx:" + indx + "_" + ndviItem.value.replace("-", "").replace("-", "");
     console.log(dtxt);
@@ -110,7 +110,7 @@ const addLayer = async (e) => {
         format: "image/png",
         transparent: true,
         styles: "ndvi",
-        opacity: 0.8,
+        opacity: range,
         zIndex: 6,
         name: "indx"
     })
@@ -129,42 +129,6 @@ var echart = echarts.init(dom, null, {
     renderer: 'canvas',
     useDirtyRect: false
 });
-
-// option = {
-//     title: {
-//         text: 'NDVI 2022'
-//     },
-//     tooltip: {
-//         trigger: 'axis',
-//         axisPointer: {
-//             type: 'cross',
-//             label: {
-//                 backgroundColor: '#6a7985'
-//             }
-//         }
-//     },
-//     xAxis: {
-//         type: 'category',
-//         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-//         name: 'Date of Year (DOY)',
-//         nameLocation: 'center',
-//         nameGap: 30,
-//     },
-//     yAxis: {
-//         type: 'value',
-//         name: 'NDVI',
-//         nameLocation: 'center',
-//         nameGap: 30,
-//     },
-//     series: [
-//         {
-//             data: [820, 932, 901, 934, 1290, 1330, 1320],
-//             type: 'line',
-//             smooth: true,
-//             symbol: 'none',
-//         }
-//     ]
-// };
 
 var option = {
     grid: {

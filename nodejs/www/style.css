@@ -21,7 +21,7 @@ body {
 
 #chart-container {
     position: relative;
-    height: 65vh;
+    height: 60vh;
     overflow: hidden;
 }
 
