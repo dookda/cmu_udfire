@@ -215,14 +215,15 @@ def initLoop():
         doy.rjust(3 + len(doy), '0')
         dd = datetime.strptime(str(year) + "-" + doy,
                                "%Y-%j").strftime("%Y%m%d")
-        print(doy, dd)
+
         getJSON(doy, dd, year)
+        print(doy, dd, year)
 
 
 def initNow():
     dt = datetime.now()
     doy = dt.timetuple().tm_yday
-    doy -= 4
+    doy -= 8
     year = date.today().year
     if doy < 10:
         doy = "00" + str(doy)
@@ -232,8 +233,9 @@ def initNow():
         doy = str(doy)
 
     dd = datetime.strptime(str(year) + "-" + doy, "%Y-%j").strftime("%Y%m%d")
-    print(doy, dd, year)
+
     getJSON(doy, dd, year)
+    print(doy, dd, year)
 
 
 if __name__ == '__main__':
