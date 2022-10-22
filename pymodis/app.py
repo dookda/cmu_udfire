@@ -82,7 +82,7 @@ def calNdmi(nir, swir, f, dd):
     os.system(exp)
     print("generate NDMI")
     targetClip = f'./ndmi_clip/_{dd}_500m_32647_ndmi_clip.tif'
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
     os.system(clip)
     print("clip NDMI")
 
@@ -99,7 +99,7 @@ def calNdwi(green, nir, f, dd):
     os.system(exp)
     print("generate NDWI")
     targetClip = f'./ndwi_clip/_{dd}_500m_32647_ndwi_clip.tif'
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
     os.system(clip)
     print("clip NDWI")
 
@@ -116,7 +116,9 @@ def calNdvi(red, nir, f, dd):
     os.system(exp)
     print("generate NDVI")
     targetClip = f'./ndvi_clip/_{dd}_500m_32647_ndvi_clip.tif'
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 630822 1962565 646254 1989974'
+
+    # old exten 630822 1962565 646254 1989974
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
     os.system(clip)
     print("clip NDVI")
 
@@ -201,6 +203,7 @@ def initLoop():
     doyEnd = dt.timetuple().tm_yday
     doy -= 4
     year = date.today().year
+    # year = 2022
 
     print(doyEnd)
 
