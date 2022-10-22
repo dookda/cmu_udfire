@@ -242,8 +242,8 @@ def initNow():
 
 
 if __name__ == '__main__':
-    initNow()
-    # initLoop()
+    # initNow()
+    initLoop()
     # schedule.every(24).hours.do(initNow)
     # schedule.every().day.at("07:30").do(initNow)
     # while True:
