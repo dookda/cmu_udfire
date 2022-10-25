@@ -223,7 +223,7 @@ def initLoop():
 
     print(doyEnd)
 
-    for doy in range(281, doyEnd + 1):
+    for doy in range(1, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
