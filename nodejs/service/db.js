@@ -7,7 +7,7 @@ const db = new Pool({
     host: 'postgis_pymodis',
     database: 'geodb',
     password: '1234',
-    port: 5432,
+    port: 5433,
 });
 
 

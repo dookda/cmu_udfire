@@ -27,6 +27,8 @@ cursor = pg.cursor()
 username = earth["user"]
 password = earth["pass"]
 
+bbox = {"minx": 594799, "miny": 1895154, "maxx": 731907, "maxy": 2033687}
+
 
 def removeFile(folder):
     dir = os.listdir(folder)
@@ -42,7 +44,7 @@ def addStore(file, indx, dd):
         print(cmd, "add store")
         os.system(cmd)
 
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>630822</minx><maxx>646254</maxx><miny>1962565</miny><maxy>1989974</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
+        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>{bbox['minx']}</minx><maxx>{bbox['maxx']}</maxx><miny>{bbox['miny']}</miny><maxy>{bbox['maxy']}</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
         print(cmd, "publish layer")
         os.system(cmd)
 
@@ -82,7 +84,7 @@ def calNdmi(nir, swir, f, dd):
     os.system(exp)
     print("generate NDMI")
     targetClip = f'./ndmi_clip/_{dd}_500m_32647_ndmi_clip.tif'
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te {bbox["minx"]} {bbox["miny"]} {bbox["maxx"]} {bbox["maxy"]}'
     os.system(clip)
     print("clip NDMI")
 
@@ -99,7 +101,7 @@ def calNdwi(green, nir, f, dd):
     os.system(exp)
     print("generate NDWI")
     targetClip = f'./ndwi_clip/_{dd}_500m_32647_ndwi_clip.tif'
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te {bbox["minx"]} {bbox["miny"]} {bbox["maxx"]} {bbox["maxy"]}'
     os.system(clip)
     print("clip NDWI")
 
@@ -118,7 +120,7 @@ def calNdvi(red, nir, f, dd):
     targetClip = f'./ndvi_clip/_{dd}_500m_32647_ndvi_clip.tif'
 
     # old exten 630822 1962565 646254 1989974
-    clip = f'gdalwarp -overwrite {target} {targetClip} -te 594799 1895154 731907 2033687'
+    clip = f'gdalwarp -overwrite {target} {targetClip} -te {bbox["minx"]} {bbox["miny"]} {bbox["maxx"]} {bbox["maxy"]}'
     os.system(clip)
     print("clip NDVI")
 
@@ -181,19 +183,34 @@ def getData(doy, dat, dd, year):
     warpFile(dat, dd)
 
 
+def recordDoy(doy, dd, year):
+    sql = f"INSERT INTO imglist(doy, dd, yy, dt)VALUES({doy},'{dd}','{year}', now())"
+    # print(sql)
+    cursor.execute(sql)
+
+
+def checkDoyExist(dd):
+    sql = f"SELECT * FROM imglist WHERE dd='{dd}'"
+    cursor.execute(sql)
+    record = cursor.fetchone()
+    return record
+
+
 def getJSON(doy, dd, year):
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/{year}/{doy}.json"
-    print(doy, dd, url)
-
     try:
         r = requests.get(url)
-        # r.raise_for_status()
-        arr = r.json()
-        for a in arr:
-            name = a["name"].split(".")
-            if name[2] == 'h27v07':
-                print(f'get HDF name: {a["name"]}')
-                getData(doy, a["name"], dd, year)
+        if r.status_code == 200:
+            print(r.status_code)
+            arr = r.json()
+            for a in arr:
+                name = a["name"].split(".")
+                if name[2] == 'h27v07':
+                    print(f'get HDF name: {a["name"]}')
+                    getData(doy, a["name"], dd, year)
+                    recordDoy(doy, dd, year)
+        else:
+            print("Not Found")
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
 
@@ -201,13 +218,12 @@ def getJSON(doy, dd, year):
 def initLoop():
     dt = datetime.now()
     doyEnd = dt.timetuple().tm_yday
-    # doy = 4
     year = date.today().year
     # year = 2022
 
     print(doyEnd)
 
-    for doy in range(292, doyEnd + 1):
+    for doy in range(281, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -219,8 +235,12 @@ def initLoop():
         dd = datetime.strptime(str(year) + "-" + doy,
                                "%Y-%j").strftime("%Y%m%d")
 
-        getJSON(doy, dd, year)
-        print(doy, dd, year)
+        doyDB = checkDoyExist(dd)
+
+        if doyDB == None:
+            # print(dd)
+            getJSON(doy, dd, year)
+            print(doy, dd, year)
 
 
 def initNow():

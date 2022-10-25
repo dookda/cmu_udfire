@@ -1,15 +1,5 @@
 #auth
 
-pymodis/data/*.hdf
-pymodis/out/*.tif
-pymodis/tmp/*.tif
-pymodis/ndvi/*.tif
-pymodis/ndvi_clip/*.tif
-pymodis/ndmi/*.tif
-pymodis/ndmi_clip/*.tif
-pymodis/ndwi/*.tif
-pymodis/ndwi_clip/*.tif
-
 lst_terra/*
 
 # Logs

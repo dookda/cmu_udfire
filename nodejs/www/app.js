@@ -1,4 +1,5 @@
 let geoserver = "http://150.95.80.114:8080/geoserver"
+// let geoserver = "http://localhost:8080/geoserver"
 
 const map = L.map('map', {
     center: [17.868925397129943, 100.31221166785994],
