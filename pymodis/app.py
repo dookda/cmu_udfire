@@ -193,22 +193,24 @@ def checkDoyExist(dd):
     sql = f"SELECT * FROM imglist WHERE dd='{dd}'"
     cursor.execute(sql)
     record = cursor.fetchone()
-    return record
+    if (record == None):
+        return True
 
 
 def getJSON(doy, dd, year):
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/{year}/{doy}.json"
     try:
         r = requests.get(url)
+        print(r.status_code)
         if r.status_code == 200:
             print(r.status_code)
-            arr = r.json()
-            for a in arr:
-                name = a["name"].split(".")
-                if name[2] == 'h27v07':
-                    print(f'get HDF name: {a["name"]}')
-                    getData(doy, a["name"], dd, year)
-                    recordDoy(doy, dd, year)
+        arr = r.json()
+        for a in arr:
+            name = a["name"].split(".")
+            if name[2] == 'h27v07':
+                print(f'get HDF name: {a["name"]}')
+                getData(doy, a["name"], dd, year)
+                recordDoy(doy, dd, year)
         else:
             print("Not Found")
     except requests.exceptions.HTTPError as err:
@@ -223,7 +225,7 @@ def initLoop():
 
     print(doyEnd)
 
-    for doy in range(1, doyEnd + 1):
+    for doy in range(285, doyEnd + 1):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -234,11 +236,8 @@ def initLoop():
         doy.rjust(3 + len(doy), '0')
         dd = datetime.strptime(str(year) + "-" + doy,
                                "%Y-%j").strftime("%Y%m%d")
-
         doyDB = checkDoyExist(dd)
-
-        if doyDB == None:
-            # print(dd)
+        if doyDB:
             getJSON(doy, dd, year)
             print(doy, dd, year)
 

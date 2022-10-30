@@ -122,7 +122,6 @@ const addLayer = async () => {
     // }
 }
 
-
 // ndviItem.onchange = addLayer;
 
 var dom = document.getElementById('chart');
