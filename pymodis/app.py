@@ -199,18 +199,19 @@ def checkDoyExist(dd):
 
 def getJSON(doy, dd, year):
     url = f"https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD09GA/{year}/{doy}.json"
+    print(url)
     try:
         r = requests.get(url)
         print(r.status_code)
         if r.status_code == 200:
             print(r.status_code)
-        arr = r.json()
-        for a in arr:
-            name = a["name"].split(".")
-            if name[2] == 'h27v07':
-                print(f'get HDF name: {a["name"]}')
-                getData(doy, a["name"], dd, year)
-                recordDoy(doy, dd, year)
+            arr = r.json()
+            for a in arr:
+                name = a["name"].split(".")
+                if name[2] == 'h27v07':
+                    print(f'get HDF name: {a["name"]}')
+                    getData(doy, a["name"], dd, year)
+                    recordDoy(doy, dd, year)
         else:
             print("Not Found")
     except requests.exceptions.HTTPError as err:
@@ -238,8 +239,8 @@ def initLoop():
                                "%Y-%j").strftime("%Y%m%d")
         doyDB = checkDoyExist(dd)
         if doyDB:
-            getJSON(doy, dd, year)
             print(doy, dd, year)
+            getJSON(doy, dd, year)
 
 
 def initNow():

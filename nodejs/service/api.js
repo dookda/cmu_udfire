@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express.Router();
-const con = require("./db");
-const db = con.db;
+const db = require("./db").db;
 
 const axios = require('axios');
 
@@ -46,5 +45,20 @@ app.get("/api/listndvi", (req, res) => {
 
 })
 
+app.get('/api/getcommuforest', (req, res) => {
+    const sql = "SELECT forest_name, lat, lon FROM commu_forest";
+    console.log(sql);
+    db.query(sql).then(r => {
+        res.status(200).json({
+            data: r.rows
+        })
+    })
+})
+
+app.get('/api/test', (req, res) => {
+    res.status(200).json({
+        data: "ok"
+    })
+})
 
 module.exports = app;

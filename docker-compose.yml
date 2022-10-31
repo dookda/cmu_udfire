@@ -21,6 +21,7 @@ services:
     restart: always
     depends_on:
       - postgis
+      - geoserver
     environment:
       - NODE_ENV=production
     volumes:

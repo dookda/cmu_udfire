@@ -1,0 +1,17 @@
+<layer>
+  <name>ud_amp_4326</name>
+  <id>LayerInfoImpl--307068e1:1842ce7c82a:-7ffd</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--307068e1:1842ce7c82a:-7fe1</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--307068e1:1842ce7c82a:-7ffe</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2022-10-31 08:03:57.772 UTC</dateCreated>
+  <dateModified>2022-10-31 08:47:47.82 UTC</dateModified>
+</layer>

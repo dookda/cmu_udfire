@@ -1,5 +1,5 @@
-let geoserver = "http://150.95.80.114:8080/geoserver"
-// let geoserver = "http://localhost:8080/geoserver"
+// let geoserver = "http://150.95.80.114:8080/geoserver"
+let geoserver = "http://localhost:8080/geoserver"
 
 const map = L.map('map', {
     center: [17.868925397129943, 100.31221166785994],
@@ -41,22 +41,22 @@ const gter = L.tileLayer('https://{s}.google.com/vt/lyrs=t,m&x={x}&y={y}&z={z}',
     zIndex: 0
 });
 
-const prov = L.tileLayer.wms("https://rti2dss.com/geoserver/th/wms?", {
-    layers: 'th:province_4326',
+const prov = L.tileLayer.wms(geoserver + "/indx/wms?", {
+    layers: 'indx:ud_pro_4326',
     format: 'image/png',
     transparent: true,
     CQL_FILTER: 'pro_code=53'
 });
 
-const amp = L.tileLayer.wms("https://rti2dss.com/geoserver/th/wms?", {
-    layers: 'th:amphoe_4326',
+const amp = L.tileLayer.wms(geoserver + "/indx/wms?", {
+    layers: 'indx:ud_amp_4326',
     format: 'image/png',
     transparent: true,
     CQL_FILTER: 'pro_code=53'
 });
 
-const tam = L.tileLayer.wms("https://rti2dss.com/geoserver/th/wms?", {
-    layers: 'th:tambon_4326',
+const tam = L.tileLayer.wms(geoserver + "/indx/wms?", {
+    layers: 'indx:ud_tam_4326',
     format: 'image/png',
     transparent: true,
     CQL_FILTER: 'pro_code=53'
@@ -71,9 +71,9 @@ const baseMap = {
 }
 
 const overlayMap = {
-    // "ขอบจังหวัด": prov,
-    // "ขอบอำเภอ": amp.addTo(map),
-    // "ขอบตำบล": tam.addTo(map)
+    "ขอบจังหวัด": prov,
+    "ขอบอำเภอ": amp.addTo(map),
+    "ขอบตำบล": tam.addTo(map)
 }
 
 L.control.layers(baseMap, overlayMap).addTo(map);
@@ -117,9 +117,9 @@ const addLayer = async () => {
     })
 
     lyr.addTo(map)
-    // if (wmsList.includes(wmsLyr[0])) {
-    //     lyr.addTo(map)
-    // }
+
+    fetch('/api/getcommuforest').then(res => res.json()).then(data => console.log(data))
+    showStat()
 }
 
 // ndviItem.onchange = addLayer;
@@ -168,9 +168,37 @@ if (option && typeof option === 'object') {
 
 window.addEventListener('resize', echart.resize);
 
-map.on("click", async (e) => {
+let showStat = async (e) => {
+    // let lyrs = wmsLyr.toString();
+    // let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
+    // let size = await map.getSize();
+    // let bbox = await map.getBounds().toBBoxString();
+    // let indx = document.querySelector('input[name="indx"]:checked').value;
+
+    // let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
+    //     "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
+    //     "&QUERY_LAYERS=" + lyrs +
+    //     "&LAYERS=" + lyrs +
+    //     "&Feature_count=300" +
+    //     "&INFO_FORMAT=application/json" +
+    //     "&X=" + Math.round(pnt.x) +
+    //     "&Y=" + Math.round(pnt.y) +
+    //     "&SRS=EPSG:4326" +
+    //     "&WIDTH=" + size.x +
+    //     "&HEIGHT=" + size.y +
+    //     "&BBOX=" + bbox;
+    // let xAxis = [];
+    // let series = [];
+
+    fetch(lyrInfoUrl).then(res => res.json()).then(data => {
+        if (data.features.length > 0) {
+            console.log("ddd");
+        }
+    })
+}
+
+let showIndx = async (e) => {
     let lyrs = wmsLyr.toString();
-    // console.log(lyrs);
     let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
     let size = await map.getSize();
     let bbox = await map.getBounds().toBBoxString();
@@ -192,18 +220,19 @@ map.on("click", async (e) => {
     // console.log(lyrInfoUrl);
     let xAxis = [];
     let series = [];
-    await axios.get(lyrInfoUrl).then(async (r) => {
-        if (r.data.features) {
-            r.data.features.map(async (i, k) => {
+
+    fetch(lyrInfoUrl).then(res => res.json()).then(data => {
+        if (data.features.length > 0) {
+            data.features.map(async (i, k) => {
                 document.getElementById("ndvitxt").innerHTML = `<div class="desc">lat: ${e.latlng.lat} 
-                <br>lon: ${e.latlng.lng}
-                <br>${indx}: ${i.properties.GRAY_INDEX.toFixed(3)} 
-                <br>วันที่: ${datefocus}`;
+                            <br>lon: ${e.latlng.lng}
+                            <br>${indx}: ${i.properties.GRAY_INDEX.toFixed(3)} 
+                            <br>วันที่: ${datefocus}`;
                 xAxis.push(k);
                 series.push(i.properties.GRAY_INDEX.toFixed(3));
             })
 
-            await echart.setOption({
+            echart.setOption({
                 xAxis: {
                     type: 'category',
                     data: [datefocus],
@@ -226,5 +255,16 @@ map.on("click", async (e) => {
             })
         }
     })
+}
+
+let getStat = (indx, yyyymmdd, latitude, longitude) => {
+    // let indx = document.querySelector('input[name="indx"]:checked').value;
+    // let ndviItem = document.getElementById('ndvidate');
+    // let url = `http://150.95.80.114:3180/getpixelvalue/[string:index]/[string:yyyymmdd]/[float:latitude]/[float:longitude]`
+    // fetch()
+}
+
+map.on("click", async (e) => {
+    showIndx(e)
 })
 
