@@ -386,7 +386,6 @@ let showForestBiomass = async (indx, ndviItem) => {
     }, 1000)
 }
 
-
 let showIndx = async (e) => {
     let lyrs = wmsLyr.toString();
     let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
@@ -445,13 +444,6 @@ let showIndx = async (e) => {
             })
         }
     })
-}
-
-let getStat = (indx, yyyymmdd, latitude, longitude) => {
-    // let indx = document.querySelector('input[name="indx"]:checked').value;
-    // let ndviItem = document.getElementById('ndvidate');
-    // let url = `http://150.95.80.114:3180/getpixelvalue/[string:index]/[string:yyyymmdd]/[float:latitude]/[float:longitude]`
-    // fetch()
 }
 
 map.on("click", async (e) => {
