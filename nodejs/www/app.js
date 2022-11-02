@@ -71,9 +71,9 @@ const baseMap = {
 }
 
 const overlayMap = {
-    // "ขอบจังหวัด": prov,
-    // "ขอบอำเภอ": amp.addTo(map),
-    // "ขอบตำบล": tam.addTo(map)
+    "ขอบจังหวัด": prov,
+    "ขอบอำเภอ": amp.addTo(map),
+    "ขอบตำบล": tam.addTo(map)
 }
 
 L.control.layers(baseMap, overlayMap).addTo(map);
