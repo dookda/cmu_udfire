@@ -1,9 +1,9 @@
-// let geoserver = "http://150.95.80.114:8080/geoserver"
-let geoserver = "http://localhost:8080/geoserver"
+let geoserver = "http://150.95.80.114:8080/geoserver"
+// let geoserver = "http://localhost:8080/geoserver"
 
 const map = L.map('map', {
-    center: [17.868925397129943, 100.31221166785994],
-    zoom: 11
+    center: [17.728925397129943, 100.49221166785994],
+    zoom: 9
 })
 
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,24 +71,22 @@ const baseMap = {
 }
 
 const overlayMap = {
-    "ขอบจังหวัด": prov,
-    "ขอบอำเภอ": amp.addTo(map),
-    "ขอบตำบล": tam.addTo(map)
+    // "ขอบจังหวัด": prov,
+    // "ขอบอำเภอ": amp.addTo(map),
+    // "ขอบตำบล": tam.addTo(map)
 }
 
 L.control.layers(baseMap, overlayMap).addTo(map);
 
 let wmsList = [];
-// axios.get('/api/listndvi').then((res) => {
-//     console.log(res);
-//     res.data.layers.layer.forEach(i => {
-//         wmsList.push(i.name);
-//     });
-// });
-
 let wmsLyr = [];
-const addLayer = async () => {
 
+let removeLayer = (n) => {
+    map.eachLayer(i => i.options.name == n ? map.removeLayer(i) : null)
+}
+
+const addLayer = async () => {
+    removeLayer("indx")
     let indx = document.querySelector('input[name="indx"]:checked').value;
     let ndviItem = document.getElementById('ndvidate');
     let range = document.getElementById('range').value;
@@ -98,14 +96,9 @@ const addLayer = async () => {
     document.getElementById("datefocus").value = ndviItem.value;
 
     let dtxt = "indx:" + indx + "_" + ndviItem.value.replace("-", "").replace("-", "");
-    console.log(dtxt);
+
     wmsLyr.push(dtxt)
-    await map.eachLayer(i => {
-        if (i.options.name == "indx") {
-            map.removeLayer(i)
-        }
-    })
-    // console.log(dtxt);
+
     let lyr = await L.tileLayer.wms(geoserver + "/wms?", {
         layers: dtxt,
         format: "image/png",
@@ -117,12 +110,8 @@ const addLayer = async () => {
     })
 
     lyr.addTo(map)
-
-    fetch('/api/getcommuforest').then(res => res.json()).then(data => console.log(data))
-    showStat()
+    showStat(indx, ndviItem.value)
 }
-
-// ndviItem.onchange = addLayer;
 
 var dom = document.getElementById('chart');
 var echart = echarts.init(dom, null, {
@@ -168,36 +157,135 @@ if (option && typeof option === 'object') {
 
 window.addEventListener('resize', echart.resize);
 
-let showStat = async (e) => {
-    // let lyrs = wmsLyr.toString();
-    // let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
-    // let size = await map.getSize();
-    // let bbox = await map.getBounds().toBBoxString();
-    // let indx = document.querySelector('input[name="indx"]:checked').value;
 
-    // let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
-    //     "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
-    //     "&QUERY_LAYERS=" + lyrs +
-    //     "&LAYERS=" + lyrs +
-    //     "&Feature_count=300" +
-    //     "&INFO_FORMAT=application/json" +
-    //     "&X=" + Math.round(pnt.x) +
-    //     "&Y=" + Math.round(pnt.y) +
-    //     "&SRS=EPSG:4326" +
-    //     "&WIDTH=" + size.x +
-    //     "&HEIGHT=" + size.y +
-    //     "&BBOX=" + bbox;
-    // let xAxis = [];
-    // let series = [];
+var forestDom = document.getElementById('chart_commu_forest');
+var forestChart = echarts.init(forestDom);
 
-    fetch(lyrInfoUrl).then(res => res.json()).then(data => {
-        if (data.features.length > 0) {
-            console.log("ddd");
+var forestOption = {
+    title: {
+        text: 'ปริมาณเชื้อเพลิง'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
         }
+    },
+    legend: {},
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+        type: 'category',
+        data: [
+            "บ้านปากทับ",
+            "บ้านงอมถ้ำ",
+            "ห้วยแมง",
+            "ป่าคาย",
+            "ปางวัว",
+            "หนองไผ่",
+            "บ้านคุ้งยาง",
+            "บ้านผาจักร",
+            "บ้ายห้วยปอบ",
+            "บ้านนาตารอด"
+        ]
+    },
+    series: []
+};
+
+if (forestOption && typeof forestOption === 'object') {
+    forestChart.setOption(forestOption);
+}
+
+window.addEventListener('resize', forestChart.resize);
+
+let locationVill = [
+    { div: 'a', name: "บ้านปากทับ", lat: 17.748892, lng: 100.422899 },
+    { div: 'b', name: "บ้านงอมถ้ำ", lat: 17.972817, lng: 100.581703 },
+    { div: 'c', name: "ห้วยแมง", lat: 17.605355, lng: 100.558604 },
+    { div: 'd', name: "ป่าคาย", lat: 17.52914, lng: 100.339262 },
+    { div: 'e', name: "ปางวัว", lat: 17.83773, lng: 100.171323 },
+    { div: 'f', name: "หนองไผ่", lat: 17.599284, lng: 100.378302 },
+    { div: 'g', name: "บ้านคุ้งยาง", lat: 17.625081, lng: 100.291825 },
+    { div: 'h', name: "บ้านผาจักร", lat: 17.62646, lng: 100.269156 },
+    { div: 'i', name: "บ้ายห้วยปอบ", lat: 17.781632, lng: 100.245051 },
+    { div: 'j', name: "บ้านนาตารอด", lat: 17.681839, lng: 100.374567 }
+]
+
+
+
+let showMarker = (name, lat, lng, ndx, dd, val) => {
+    var icon = L.icon({
+        iconUrl: './pin.png',
+
+        iconSize: [38, 38],
+        iconAnchor: [12, 37],
+        popupAnchor: [5, -30]
+    });
+    L.marker([lat, lng], { icon, name: "station" }).bindPopup(`${name}<br>ดัชนี ${ndx} : ${val.toFixed(2)} <br> วันที่${dd}`).addTo(map)
+}
+let showStat = async (indx, ndviItem) => {
+    // var aa = []
+    removeLayer("station")
+    locationVill.forEach(async (k) => {
+        let latlng = { lat: k.lat, lng: k.lng }
+        let lyrs = wmsLyr.toString();
+        let pnt = await map.latLngToContainerPoint(latlng, map.getZoom());
+        let size = await map.getSize();
+        let bbox = await map.getBounds().toBBoxString();
+
+        let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
+            "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
+            "&QUERY_LAYERS=" + lyrs +
+            "&LAYERS=" + lyrs +
+            "&Feature_count=300" +
+            "&INFO_FORMAT=application/json" +
+            "&X=" + Math.round(pnt.x) +
+            "&Y=" + Math.round(pnt.y) +
+            "&SRS=EPSG:4326" +
+            "&WIDTH=" + size.x +
+            "&HEIGHT=" + size.y +
+            "&BBOX=" + bbox;
+
+        await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
+            document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
+            showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
+        })
     })
+
+    setTimeout(() => {
+        forestChart.setOption({
+            series: [
+                {
+                    name: 'ปริมาณเชื้อเพลิง',
+                    type: 'bar',
+                    data: [
+                        document.getElementById("a").value,
+                        document.getElementById("b").value,
+                        document.getElementById("c").value,
+                        document.getElementById("d").value,
+                        document.getElementById("e").value,
+                        document.getElementById("f").value,
+                        document.getElementById("g").value,
+                        document.getElementById("h").value,
+                        document.getElementById("i").value,
+                        document.getElementById("j").value
+                    ]
+                }
+            ]
+        })
+    }, 1000)
 }
 
 let showIndx = async (e) => {
+    // console.log(e.latlng);
     let lyrs = wmsLyr.toString();
     let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
     let size = await map.getSize();
