@@ -32,7 +32,14 @@ body {
     padding: 5px;
 }
 
-#chart_commu_forest {
+#chart_forest_indx {
+    position: relative;
+    height: 40vh;
+    overflow: hidden;
+    padding: 5px;
+}
+
+#chart_forest_biomass {
     position: relative;
     height: 40vh;
     overflow: hidden;

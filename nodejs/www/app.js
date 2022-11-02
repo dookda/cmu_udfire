@@ -80,6 +80,7 @@ L.control.layers(baseMap, overlayMap).addTo(map);
 
 let wmsList = [];
 let wmsLyr = [];
+let ndviLyr = [];
 
 let removeLayer = (n) => {
     map.eachLayer(i => i.options.name == n ? map.removeLayer(i) : null)
@@ -93,11 +94,14 @@ const addLayer = async () => {
     // console.log(range);
 
     wmsLyr = [];
+    ndviLyr = [];
     document.getElementById("datefocus").value = ndviItem.value;
 
     let dtxt = "indx:" + indx + "_" + ndviItem.value.replace("-", "").replace("-", "");
-
     wmsLyr.push(dtxt)
+
+    let ndvitxt = "indx:ndvi_" + ndviItem.value.replace("-", "").replace("-", "");
+    ndviLyr.push(ndvitxt)
 
     let lyr = await L.tileLayer.wms(geoserver + "/wms?", {
         layers: dtxt,
@@ -110,7 +114,8 @@ const addLayer = async () => {
     })
 
     lyr.addTo(map)
-    showStat(indx, ndviItem.value)
+    showForestIndx(indx, ndviItem.value)
+    showForestBiomass(indx, ndviItem.value)
 }
 
 var dom = document.getElementById('chart');
@@ -141,7 +146,6 @@ var option = {
     },
     series: [
         {
-            // data: [120],
             type: 'bar',
             showBackground: true,
             backgroundStyle: {
@@ -157,13 +161,12 @@ if (option && typeof option === 'object') {
 
 window.addEventListener('resize', echart.resize);
 
-
-var forestDom = document.getElementById('chart_commu_forest');
+var forestDom = document.getElementById('chart_forest_indx');
 var forestChart = echarts.init(forestDom);
 
 var forestOption = {
     title: {
-        text: 'ปริมาณเชื้อเพลิง'
+        text: 'ค่าดัชนีของป่าชุมชน'
     },
     tooltip: {
         trigger: 'axis',
@@ -171,7 +174,13 @@ var forestOption = {
             type: 'shadow'
         }
     },
-    legend: {},
+    legend: {
+        // Try 'horizontal' 'vertical'
+        show: false,
+        orient: 'horizontal',
+        right: 10,
+        top: 'bottom'
+    },
     grid: {
         left: '3%',
         right: '4%',
@@ -184,18 +193,7 @@ var forestOption = {
     },
     yAxis: {
         type: 'category',
-        data: [
-            "บ้านปากทับ",
-            "บ้านงอมถ้ำ",
-            "ห้วยแมง",
-            "ป่าคาย",
-            "ปางวัว",
-            "หนองไผ่",
-            "บ้านคุ้งยาง",
-            "บ้านผาจักร",
-            "บ้ายห้วยปอบ",
-            "บ้านนาตารอด"
-        ]
+        data: []
     },
     series: []
 };
@@ -205,6 +203,49 @@ if (forestOption && typeof forestOption === 'object') {
 }
 
 window.addEventListener('resize', forestChart.resize);
+
+var biomassDom = document.getElementById('chart_forest_biomass');
+var biomassChart = echarts.init(biomassDom);
+
+var biomassOption = {
+    title: {
+        text: 'ความรุนแรงไฟ (Kw/m)'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        // Try 'horizontal' 'vertical'
+        show: false,
+        orient: 'horizontal',
+        right: 10,
+        top: 'bottom'
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+        type: 'category',
+        data: []
+    },
+    series: []
+};
+
+if (biomassOption && typeof biomassOption === 'object') {
+    biomassChart.setOption(biomassOption);
+}
+
+window.addEventListener('resize', biomassOption.resize);
 
 let locationVill = [
     { div: 'a', name: "บ้านปากทับ", lat: 17.748892, lng: 100.422899 },
@@ -219,20 +260,20 @@ let locationVill = [
     { div: 'j', name: "บ้านนาตารอด", lat: 17.681839, lng: 100.374567 }
 ]
 
-
-
 let showMarker = (name, lat, lng, ndx, dd, val) => {
     var icon = L.icon({
         iconUrl: './pin.png',
 
-        iconSize: [38, 38],
+        iconSize: [30, 30],
         iconAnchor: [12, 37],
         popupAnchor: [5, -30]
     });
     L.marker([lat, lng], { icon, name: "station" }).bindPopup(`${name}<br>ดัชนี ${ndx} : ${val.toFixed(2)} <br> วันที่${dd}`).addTo(map)
 }
-let showStat = async (indx, ndviItem) => {
-    // var aa = []
+
+let showForestIndx = async (indx, ndviItem) => {
+    var indxArr = []
+    var indxName = []
     removeLayer("station")
     locationVill.forEach(async (k) => {
         let latlng = { lat: k.lat, lng: k.lng }
@@ -255,37 +296,98 @@ let showStat = async (indx, ndviItem) => {
             "&BBOX=" + bbox;
 
         await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
-            document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
+            indxArr.push(data.features[0].properties.GRAY_INDEX)
+            indxName.push(k.name)
+            // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
             showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
         })
     })
 
     setTimeout(() => {
         forestChart.setOption({
+            title: {
+                text: `ค่าดัชนี ${indx} ของป่าชุมชน`,
+            },
+            yAxis: {
+                type: 'category',
+                data: indxName
+            },
             series: [
                 {
-                    name: 'ปริมาณเชื้อเพลิง',
+                    name: ` ${indx}`,
                     type: 'bar',
-                    data: [
-                        document.getElementById("a").value,
-                        document.getElementById("b").value,
-                        document.getElementById("c").value,
-                        document.getElementById("d").value,
-                        document.getElementById("e").value,
-                        document.getElementById("f").value,
-                        document.getElementById("g").value,
-                        document.getElementById("h").value,
-                        document.getElementById("i").value,
-                        document.getElementById("j").value
-                    ]
+                    data: indxArr
                 }
             ]
         })
     }, 1000)
 }
 
+let fireIntensity = (ndvi) => {
+    let M = ((10007 * ndvi) - 2936.8) / 1000000   // biomass
+    let h = 19580                       // kj/kg
+    let a = 1.5
+    let b = 1.2
+    let c = 1.8
+    return (h * M * a * b * c) / 60
+}
+
+let showForestBiomass = async (indx, ndviItem) => {
+    var indxArr = []
+    var indxName = []
+    removeLayer("station")
+    locationVill.forEach(async (k) => {
+        let latlng = { lat: k.lat, lng: k.lng }
+        let lyrs = ndviLyr.toString();
+        let pnt = await map.latLngToContainerPoint(latlng, map.getZoom());
+        let size = await map.getSize();
+        let bbox = await map.getBounds().toBBoxString();
+
+        let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
+            "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
+            "&QUERY_LAYERS=" + lyrs +
+            "&LAYERS=" + lyrs +
+            "&Feature_count=300" +
+            "&INFO_FORMAT=application/json" +
+            "&X=" + Math.round(pnt.x) +
+            "&Y=" + Math.round(pnt.y) +
+            "&SRS=EPSG:4326" +
+            "&WIDTH=" + size.x +
+            "&HEIGHT=" + size.y +
+            "&BBOX=" + bbox;
+
+        await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
+
+            indxName.push(k.name)
+            let fi = fireIntensity(data.features[0].properties.GRAY_INDEX)
+            indxArr.push(fi.toFixed(3))
+            // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
+            // showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
+        })
+    })
+
+    setTimeout(() => {
+        biomassChart.setOption({
+            title: {
+                text: `ค่าความรุนแรงไฟ (kw/m)`,
+            },
+            yAxis: {
+                type: 'category',
+                data: indxName
+            },
+            series: [
+                {
+                    name: `ความรุนแรงไฟ (kw/m)`,
+                    type: 'bar',
+                    data: indxArr
+                }
+            ]
+        })
+    }, 1000)
+}
+
+
 let showIndx = async (e) => {
-    // console.log(e.latlng);
     let lyrs = wmsLyr.toString();
     let pnt = await map.latLngToContainerPoint(e.latlng, map.getZoom());
     let size = await map.getSize();
