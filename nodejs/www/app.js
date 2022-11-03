@@ -78,6 +78,48 @@ const overlayMap = {
 
 L.control.layers(baseMap, overlayMap).addTo(map);
 
+
+var legend = L.control({ position: "bottomleft" });
+
+function showLegend() {
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += `<button class="btn btn-sm" onClick="hideLegend()"><i class="bi bi-chevron-down"></i>ซ่อนสัญลักษณ์</button><br>`;
+        div.innerHTML += '<i style="background: #1a9850"></i><span class="kanit">1.00</span><br>';
+        div.innerHTML += '<i style="background: #229b51"></i><span class="kanit">0.75</span><br>';
+        div.innerHTML += '<i style="background: #91cf60"></i><span class="kanit">0.25</span><br>';
+        div.innerHTML += '<i style="background: #fee08b"></i><span class="kanit">0</span><br>';
+        div.innerHTML += '<i style="background: #fc8d59"></i><span class="kanit">-0.25</span><br>';
+        div.innerHTML += '<i style="background: #db3d2d"></i><span class="kanit">-0.75</span><br>';
+        div.innerHTML += '<i style="background: #d73027"></i><span class="kanit">-1.00</span><br>';
+        // div.innerHTML += '<i style="background: #bd0000"></i><span class="kanit">ฝนตกหนักมาก</span><br>';
+        return div;
+    };
+    legend.addTo(map);
+}
+
+// showLegend = true; 
+// var toggleLegend = function () {
+//   if (showLegend === true) {
+//     $('.legend').hide();
+//     showLegend = false;
+//   } else {
+//     $('.legend').show();
+//     showLegend = true;
+//   }
+// }
+
+function hideLegend() {
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend')
+        div.innerHTML += `<button class="btn btn-sm" onClick="showLegend()"><i class="bi bi-chevron-up"></i>แสดงสัญลักษณ์</button>`;
+        return div;
+    };
+    legend.addTo(map);
+}
+
+hideLegend()
+
 let wmsList = [];
 let wmsLyr = [];
 let ndviLyr = [];
