@@ -310,7 +310,7 @@ let showMarker = (name, lat, lng, ndx, dd, val) => {
         iconAnchor: [12, 37],
         popupAnchor: [5, -30]
     });
-    L.marker([lat, lng], { icon, name: "station" }).bindPopup(`${name}<br>ดัชนี ${ndx} : ${val.toFixed(2)} <br> วันที่${dd}`).addTo(map)
+    L.marker([lat, lng], { icon, name: "station" }).bindPopup(`${name}<br>ดัชนี ${ndx} : ${val.toFixed(2)} <br> วันที่ ${dd}`).addTo(map)
 }
 
 let showForestIndx = async (indx, ndviItem) => {
