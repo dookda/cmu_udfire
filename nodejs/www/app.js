@@ -251,7 +251,7 @@ var biomassChart = echarts.init(biomassDom);
 
 var biomassOption = {
     title: {
-        text: 'ความรุนแรงไฟ (Kw/m)'
+        text: 'ความรุนแรงไฟ (w/m)'
     },
     tooltip: {
         trigger: 'axis',
@@ -371,7 +371,7 @@ let fireIntensity = (ndvi) => {
     let a = 1.5
     let b = 1.2
     let c = 1.8
-    return (h * M * a * b * c) / 60
+    return ((h * M * a * b * c) / 60) > 0 ? ((h * M * a * b * c) / 60) * 100 : 0
 }
 
 let showForestBiomass = async (indx, ndviItem) => {
@@ -411,7 +411,7 @@ let showForestBiomass = async (indx, ndviItem) => {
     setTimeout(() => {
         biomassChart.setOption({
             title: {
-                text: `ค่าความรุนแรงไฟ (kw/m)`,
+                text: `ค่าความรุนแรงไฟ (w/m)`,
             },
             yAxis: {
                 type: 'category',
@@ -419,7 +419,7 @@ let showForestBiomass = async (indx, ndviItem) => {
             },
             series: [
                 {
-                    name: `ความรุนแรงไฟ (kw/m)`,
+                    name: `ความรุนแรงไฟ (w/m)`,
                     type: 'bar',
                     data: indxArr
                 }
