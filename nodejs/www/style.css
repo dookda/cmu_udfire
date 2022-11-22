@@ -48,14 +48,14 @@ body {
 
 #search-panel {
     position: relative;
-    height: 18vh;
+    height: 14vh;
     overflow: hidden;
     padding: 5px;
 }
 
 #search-info {
     position: relative;
-    height: 18vh;
+    height: 14vh;
     overflow: hidden;
     padding: 5px;
 }
