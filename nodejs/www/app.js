@@ -520,7 +520,7 @@ let loadHotspot = async () => {
         filter: function (feature) {
             if (feature.geometry.coordinates[0] > 96.295861 && feature.geometry.coordinates[0] < 106.113154) {
                 if (feature.geometry.coordinates[1] > 5.157973 && feature.geometry.coordinates[1] < 20.221918) {
-                    myModal.hide();
+                    // myModal.hide();
                     return feature
                 }
             }
