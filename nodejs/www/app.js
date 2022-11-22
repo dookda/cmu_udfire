@@ -367,6 +367,7 @@ let showForestIndx = async (indx, ndviItem) => {
 
 let fireIntensity = (ndvi) => {
     let M = ((10007 * (ndvi * -1)) - 2936.8) / 1000000   // biomass
+    console.log(M);
     let h = 19580                       // kj/kg
     let a = 1.5
     let b = 1.2
