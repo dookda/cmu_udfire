@@ -533,6 +533,8 @@ let loadHotspot = async () => {
     }).addTo(fc)
 }
 
+loadHotspot();
+
 map.on("click", async (e) => {
     showIndx(e)
 })
