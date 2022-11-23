@@ -350,7 +350,7 @@ let showForestIndx = async (indx, ndviItem) => {
     setTimeout(() => {
         forestChart.setOption({
             title: {
-                text: `ค่าดัชนี ${indx} ของป่าชุมชน`,
+                text: `ค่า ${indx} ของป่าชุมชน`,
             },
             yAxis: {
                 type: 'category',
