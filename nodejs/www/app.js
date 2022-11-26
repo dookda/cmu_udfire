@@ -84,9 +84,11 @@ L.control.layers(baseMap, overlayMap).addTo(map);
 var legend = L.control({ position: "bottomleft" });
 
 function showLegend() {
+    let indx = document.querySelector('input[name="indx"]:checked').value;
     legend.onAdd = function (map) {
         var div = L.DomUtil.create("div", "legend");
         div.innerHTML += `<button class="btn btn-sm" onClick="hideLegend()"><i class="bi bi-chevron-down"></i>ซ่อนสัญลักษณ์</button><br>`;
+        div.innerHTML += `<b></b>${indx}</br>`;
         div.innerHTML += '<i style="background: #1a9850"></i><span class="kanit">1.00</span><br>';
         div.innerHTML += '<i style="background: #229b51"></i><span class="kanit">0.75</span><br>';
         div.innerHTML += '<i style="background: #91cf60"></i><span class="kanit">0.25</span><br>';
@@ -100,15 +102,15 @@ function showLegend() {
     legend.addTo(map);
 }
 
-// showLegend = true; 
+// showLegend = true;
 // var toggleLegend = function () {
-//   if (showLegend === true) {
-//     $('.legend').hide();
-//     showLegend = false;
-//   } else {
-//     $('.legend').show();
-//     showLegend = true;
-//   }
+//     if (showLegend === true) {
+//         $('.legend').hide();
+//         showLegend = false;
+//     } else {
+//         $('.legend').show();
+//         showLegend = true;
+//     }
 // }
 
 function hideLegend() {
@@ -119,8 +121,6 @@ function hideLegend() {
     };
     legend.addTo(map);
 }
-
-hideLegend()
 
 let wmsList = [];
 let wmsLyr = [];
@@ -158,8 +158,8 @@ const addLayer = async () => {
     })
 
     lyr.addTo(map)
-    showForestIndx(indx, ndviItem.value)
-    showForestBiomass(indx, ndviItem.value)
+    // showForestIndx(indx, ndviItem.value)
+    // showForestBiomass(indx, ndviItem.value)
     showFiChart(indx, ndviItem.value)
 }
 
@@ -205,92 +205,6 @@ if (option && typeof option === 'object') {
 }
 
 window.addEventListener('resize', echart.resize);
-
-var forestDom = document.getElementById('chart_forest_indx');
-var forestChart = echarts.init(forestDom);
-
-var forestOption = {
-    title: {
-        text: 'ค่าดัชนีของป่าชุมชน'
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'shadow'
-        }
-    },
-    legend: {
-        // Try 'horizontal' 'vertical'
-        show: false,
-        orient: 'horizontal',
-        right: 10,
-        top: 'bottom'
-    },
-    grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'value',
-        boundaryGap: [0, 0.01]
-    },
-    yAxis: {
-        type: 'category',
-        data: []
-    },
-    series: []
-};
-
-if (forestOption && typeof forestOption === 'object') {
-    forestChart.setOption(forestOption);
-}
-
-window.addEventListener('resize', forestChart.resize);
-
-var biomassDom = document.getElementById('chart_forest_biomass');
-var biomassChart = echarts.init(biomassDom);
-
-var biomassOption = {
-    title: {
-        text: 'ความรุนแรงไฟ (w/m)'
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'shadow'
-        }
-    },
-    legend: {
-        // Try 'horizontal' 'vertical'
-        show: false,
-        orient: 'horizontal',
-        right: 10,
-        top: 'bottom'
-    },
-    grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'value',
-        boundaryGap: [0, 0.01]
-    },
-    yAxis: {
-        type: 'category',
-        data: []
-    },
-    series: []
-};
-
-if (biomassOption && typeof biomassOption === 'object') {
-    biomassChart.setOption(biomassOption);
-}
-
-window.addEventListener('resize', biomassOption.resize);
 
 var fiDom = document.getElementById('chart_fire_intensity');
 var fiChart = echarts.init(fiDom);
@@ -349,58 +263,6 @@ let showMarker = (name, lat, lng, ndx, dd, val) => {
     L.marker([lat, lng], { icon, name: "station" }).bindPopup(`${name}<br>ดัชนี ${ndx} : ${val.toFixed(2)} <br> วันที่ ${dd}`).addTo(map)
 }
 
-let showForestIndx = async (indx, ndviItem) => {
-    var indxArr = []
-    var indxName = []
-    removeLayer("station")
-    locationVill.forEach(async (k) => {
-        let latlng = { lat: k.lat, lng: k.lng }
-        let lyrs = wmsLyr.toString();
-        let pnt = await map.latLngToContainerPoint(latlng, map.getZoom());
-        let size = await map.getSize();
-        let bbox = await map.getBounds().toBBoxString();
-
-        let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
-            "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
-            "&QUERY_LAYERS=" + lyrs +
-            "&LAYERS=" + lyrs +
-            "&Feature_count=300" +
-            "&INFO_FORMAT=application/json" +
-            "&X=" + Math.round(pnt.x) +
-            "&Y=" + Math.round(pnt.y) +
-            "&SRS=EPSG:4326" +
-            "&WIDTH=" + size.x +
-            "&HEIGHT=" + size.y +
-            "&BBOX=" + bbox;
-
-        await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
-            indxArr.push(data.features[0].properties.GRAY_INDEX)
-            indxName.push(k.name)
-            // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
-            showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
-        })
-    })
-
-    setTimeout(() => {
-        forestChart.setOption({
-            title: {
-                text: `ค่า ${indx} ของป่าชุมชน`,
-            },
-            yAxis: {
-                type: 'category',
-                data: indxName
-            },
-            series: [
-                {
-                    name: ` ${indx}`,
-                    type: 'bar',
-                    data: indxArr
-                }
-            ]
-        })
-    }, 1000)
-}
-
 let fireIntensity = (ndvi) => {
     let biomass = ndvi < 0 ? 0 : ((100007 * (1 - ndvi))) / 1000000
     let A = 1.2
@@ -410,60 +272,6 @@ let fireIntensity = (ndvi) => {
     let fi = (biomass * A * B * C * D) / 60
 
     return fi
-}
-
-let showForestBiomass = async (indx, ndviItem) => {
-    var indxArr = []
-    var indxName = []
-    removeLayer("station")
-    locationVill.forEach(async (k) => {
-        let latlng = { lat: k.lat, lng: k.lng }
-        let lyrs = ndviLyr.toString();
-        let pnt = await map.latLngToContainerPoint(latlng, map.getZoom());
-        let size = await map.getSize();
-        let bbox = await map.getBounds().toBBoxString();
-
-        let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
-            "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
-            "&QUERY_LAYERS=" + lyrs +
-            "&LAYERS=" + lyrs +
-            "&Feature_count=300" +
-            "&INFO_FORMAT=application/json" +
-            "&X=" + Math.round(pnt.x) +
-            "&Y=" + Math.round(pnt.y) +
-            "&SRS=EPSG:4326" +
-            "&WIDTH=" + size.x +
-            "&HEIGHT=" + size.y +
-            "&BBOX=" + bbox;
-
-        await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
-
-            indxName.push(k.name)
-            let fi = fireIntensity(data.features[0].properties.GRAY_INDEX)
-            indxArr.push(fi.toFixed(3))
-            // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
-            // showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
-        })
-    })
-
-    setTimeout(() => {
-        biomassChart.setOption({
-            title: {
-                text: `ค่าความรุนแรงไฟ (w/m)`,
-            },
-            yAxis: {
-                type: 'category',
-                data: indxName
-            },
-            series: [
-                {
-                    name: `ความรุนแรงไฟ (w/m)`,
-                    type: 'bar',
-                    data: indxArr
-                }
-            ]
-        })
-    }, 1000)
 }
 
 let showIndx = async (e) => {
@@ -527,9 +335,7 @@ let showIndx = async (e) => {
 }
 
 
-
-
-let showFiChart = async (e) => {
+let showFiChart = async (indx, ndviItem) => {
     var valNdvi = []
     var valFi = []
     var staName = []
@@ -562,7 +368,8 @@ let showFiChart = async (e) => {
             let fi = fireIntensity(data.features[0].properties.GRAY_INDEX)
             valFi.push(fi.toFixed(3))
             // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
-            // showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
+            showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
+            showLegend()
         })
     })
     setTimeout(() => {
@@ -595,7 +402,7 @@ let showFiChart = async (e) => {
                     // max: 25,
                     // interval: 5,
                     axisLabel: {
-                        formatter: '{value} w/m'
+                        formatter: '{value} kw/m'
                     }
                 }
             ],
@@ -616,7 +423,7 @@ let showFiChart = async (e) => {
                     yAxisIndex: 1,
                     tooltip: {
                         valueFormatter: function (value) {
-                            return value + ' w/m';
+                            return value + ' kw/m';
                         }
                     },
                     data: valFi
