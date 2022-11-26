@@ -46,6 +46,13 @@ body {
     padding: 5px;
 }
 
+#chart_fire_intensity {
+    position: relative;
+    height: 40vh;
+    overflow: hidden;
+    padding: 5px;
+}
+
 #search-panel {
     position: relative;
     height: 14vh;

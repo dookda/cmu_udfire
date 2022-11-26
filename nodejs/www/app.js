@@ -160,6 +160,7 @@ const addLayer = async () => {
     lyr.addTo(map)
     showForestIndx(indx, ndviItem.value)
     showForestBiomass(indx, ndviItem.value)
+    showFiChart(indx, ndviItem.value)
 }
 
 var dom = document.getElementById('chart');
@@ -290,6 +291,39 @@ if (biomassOption && typeof biomassOption === 'object') {
 }
 
 window.addEventListener('resize', biomassOption.resize);
+
+var fiDom = document.getElementById('chart_fire_intensity');
+var fiChart = echarts.init(fiDom);
+
+var fiOption = {
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            crossStyle: {
+                color: '#999'
+            }
+        }
+    },
+    toolbox: {
+        feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+        }
+    },
+    legend: {
+        // data: ['Evaporation', 'Precipitation', 'Temperature']
+    },
+
+};
+
+if (fiOption && typeof fiOption === 'object') {
+    fiChart.setOption(fiOption);
+}
+
+window.addEventListener('resize', fiOption.resize);
 
 let locationVill = [
     { div: 'a', name: "บ้านปากทับ", lat: 17.748892, lng: 100.422899 },
@@ -490,6 +524,106 @@ let showIndx = async (e) => {
             })
         }
     })
+}
+
+
+
+
+let showFiChart = async (e) => {
+    var valNdvi = []
+    var valFi = []
+    var staName = []
+    removeLayer("station")
+
+    locationVill.forEach(async (k) => {
+        let latlng = { lat: k.lat, lng: k.lng }
+        let lyrs = ndviLyr.toString();
+        let pnt = await map.latLngToContainerPoint(latlng, map.getZoom());
+        let size = await map.getSize();
+        let bbox = await map.getBounds().toBBoxString();
+
+        let lyrInfoUrl = geoserver + "/wms?SERVICE=WMS" +
+            "&VERSION=1.1.1&REQUEST=GetFeatureInfo" +
+            "&QUERY_LAYERS=" + lyrs +
+            "&LAYERS=" + lyrs +
+            "&Feature_count=300" +
+            "&INFO_FORMAT=application/json" +
+            "&X=" + Math.round(pnt.x) +
+            "&Y=" + Math.round(pnt.y) +
+            "&SRS=EPSG:4326" +
+            "&WIDTH=" + size.x +
+            "&HEIGHT=" + size.y +
+            "&BBOX=" + bbox;
+
+        await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
+            console.log(data);
+            staName.push(k.name)
+            valNdvi.push(data.features[0].properties.GRAY_INDEX.toFixed(3))
+            let fi = fireIntensity(data.features[0].properties.GRAY_INDEX)
+            valFi.push(fi.toFixed(3))
+            // document.getElementById(`${k.div}`).value = data.features[0].properties.GRAY_INDEX
+            // showMarker(k.name, k.lat, k.lng, indx, ndviItem, data.features[0].properties.GRAY_INDEX)
+        })
+    })
+    setTimeout(() => {
+        console.log(staName, valNdvi, valFi);
+        fiChart.setOption({
+            xAxis: [
+                {
+                    type: 'category',
+                    data: staName,
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'ndvi',
+                    // min: 0,
+                    // max: 250,
+                    // interval: 50,
+                    axisLabel: {
+                        formatter: '{value} '
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'fire intensity',
+                    // min: 0,
+                    // max: 25,
+                    // interval: 5,
+                    axisLabel: {
+                        formatter: '{value} w/m'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'ndvi',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value + ' ';
+                        }
+                    },
+                    data: valNdvi
+                },
+                {
+                    name: 'fire intensity',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value + ' w/m';
+                        }
+                    },
+                    data: valFi
+                }
+            ]
+        })
+    }, 1000)
 }
 
 let hpData = axios.get("https://firms.modaps.eosdis.nasa.gov/mapserver/wfs/SouthEast_Asia/c56f7d70bc06160e3c443a592fd9c87e/?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAME=ms:fires_snpp_24hrs&STARTINDEX=0&COUNT=5000&SRSNAME=urn:ogc:def:crs:EPSG::4326&BBOX=-90,-180,90,180,urn:ogc:def:crs:EPSG::4326&outputformat=geojson");
