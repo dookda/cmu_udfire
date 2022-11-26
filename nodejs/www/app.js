@@ -219,14 +219,14 @@ var fiOption = {
             }
         }
     },
-    toolbox: {
-        feature: {
-            dataView: { show: true, readOnly: false },
-            magicType: { show: true, type: ['line', 'bar'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
-        }
-    },
+    // toolbox: {
+    //     feature: {
+    //         dataView: { show: true, readOnly: false },
+    //         magicType: { show: true, type: ['line', 'bar'] },
+    //         restore: { show: true },
+    //         saveAsImage: { show: true }
+    //     }
+    // },
     legend: {
         // data: ['Evaporation', 'Precipitation', 'Temperature']
     },
@@ -480,3 +480,16 @@ loadHotspot();
 map.on("click", async (e) => {
     showIndx(e)
 })
+
+const today = new Date();
+const yyyy = today.getFullYear();
+let mm = today.getMonth() + 1; // Months start at 0!
+let dd = today.getDate() - 8;
+if (dd < 10) dd = '0' + dd;
+if (mm < 10) mm = '0' + mm;
+const formattedToday = yyyy + '-' + mm + '-' + dd;
+document.getElementById('ndvidate').value = formattedToday;
+
+setTimeout(() => {
+    addLayer()
+}, 1000)
