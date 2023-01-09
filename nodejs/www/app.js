@@ -269,7 +269,7 @@ let fireIntensity = (ndvi) => {
     let B = 1.2
     let C = 1.8
     let D = 1958000
-    let fi = (biomass * A * B * C * D) / 60
+    let fi = ((biomass * A * B * C * D) / 60) / 10
 
     return fi
 }
