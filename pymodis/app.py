@@ -221,8 +221,8 @@ def getJSON(doy, dd, year):
 def initLoop():
     dt = datetime.now()
     doyEnd = dt.timetuple().tm_yday
-    year = date.today().year
-    # year = 2022
+    # year = date.today().year
+    year = 2022
 
     print(doyEnd)
 
