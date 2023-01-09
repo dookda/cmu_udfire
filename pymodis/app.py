@@ -205,7 +205,9 @@ def getJSON(doy, dd, year):
         print(r.status_code)
         if r.status_code == 200:
             print(r.status_code)
-            arr = r.json()
+            arrjson = r.json()
+            arr = arrjson["content"]
+
             for a in arr:
                 name = a["name"].split(".")
                 if name[2] == 'h27v07':
