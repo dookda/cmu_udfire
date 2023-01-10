@@ -1,3 +1,4 @@
+
 let geoserver = "http://150.95.80.114:8080/geoserver"
 // let geoserver = "http://localhost:8080/geoserver"
 
@@ -474,6 +475,11 @@ let loadHotspot = async () => {
         onEachFeature: onEachFeatureHotspot
     }).addTo(fc)
 }
+
+axios.get('/api/getupdate').then(r => {
+    let updated = moment(r.data.data[0].dt).format("DD-MM-YYYY");
+    document.getElementById("updated").innerHTML = updated
+})
 
 loadHotspot();
 

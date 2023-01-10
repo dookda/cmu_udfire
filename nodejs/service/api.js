@@ -55,9 +55,12 @@ app.get('/api/getcommuforest', (req, res) => {
     })
 })
 
-app.get('/api/test', (req, res) => {
-    res.status(200).json({
-        data: "ok"
+app.get('/api/getupdate', (req, res) => {
+    const sql = `SELECT * FROM imglist ORDER BY dt DESC LIMIT 1`
+    db.query(sql).then(r => {
+        res.status(200).json({
+            data: r.rows
+        })
     })
 })
 
