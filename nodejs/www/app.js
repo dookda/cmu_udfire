@@ -477,7 +477,7 @@ let loadHotspot = async () => {
 }
 
 axios.get('/api/getupdate').then(r => {
-    let updated = moment(r.data.data[0].dt).format("DD-MM-YYYY");
+    let updated = moment(r.data.data[0].dt).format("DD/MM/YYYY");
     document.getElementById("updated").innerHTML = updated
 })
 
