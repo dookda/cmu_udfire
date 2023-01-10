@@ -363,7 +363,7 @@ let showFiChart = async (indx, ndviItem) => {
             "&BBOX=" + bbox;
 
         await fetch(lyrInfoUrl).then(res => res.json()).then(async (data) => {
-            console.log(data);
+            // console.log(data);
             staName.push(k.name)
             valNdvi.push(data.features[0].properties.GRAY_INDEX.toFixed(3))
             let fi = fireIntensity(data.features[0].properties.GRAY_INDEX)
@@ -374,7 +374,7 @@ let showFiChart = async (indx, ndviItem) => {
         })
     })
     setTimeout(() => {
-        console.log(staName, valNdvi, valFi);
+        // console.log(staName, valNdvi, valFi);
         fiChart.setOption({
             xAxis: [
                 {
@@ -499,3 +499,5 @@ document.getElementById('ndvidate').value = formattedToday;
 setTimeout(() => {
     addLayer()
 }, 1000)
+
+console.log("พัฒนาโดย: sakda.homhuan@cmu.ac.th")
