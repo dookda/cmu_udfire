@@ -1,5 +1,0 @@
-GET http://150.95.80.114:8080/geoserver/rest/layers.json HTTP/1.1
-Authorization: Basic admin:geoserver
-
-###
-GET http://0.0.0.0:3100/getpixelvalue/ndvi/20220914/17.9413/100.3276

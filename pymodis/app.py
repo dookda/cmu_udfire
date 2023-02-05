@@ -40,11 +40,11 @@ def removeFile(folder):
 
 def addStore(file, indx, dd):
     try:
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>{indx}_{dd}</name> <workspace>indx</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores?configure=all' "
+        cmd = f"curl -u admin:udfire -v -XPOST -H 'Content-type: text/xml' -d '<coverageStore> <name>{indx}_{dd}</name> <workspace>indx</workspace> <enabled>true</enabled> <type>GeoTIFF</type> <url>{file}</url> </coverageStore>' 'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores?configure=all' "
         print(cmd, "add store")
         os.system(cmd)
 
-        cmd = f"curl -u admin:geoserver -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>{bbox['minx']}</minx><maxx>{bbox['maxx']}</maxx><miny>{bbox['miny']}</miny><maxy>{bbox['maxy']}</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
+        cmd = f"curl -u admin:udfire -v -XPOST -H 'Content-type: text/xml' -d '<coverage> <name>{indx}_{dd}</name> <title>{indx}_{dd}</title> <nativeCRS>GEOGCS['WGS84',DATUM['WGS_1984',SPHEROID['WGS84',6378137,298.257223563]],PRIMEM['Greenwich',0],UNIT['degree',0.0174532925199433,AUTHORITY['EPSG','9122']],AUTHORITY['EPSG','4326']],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',99],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500000],PARAMETER['false_northing',0],UNIT['metre',1],AXIS['Easting',EAST],AXIS['Northing',NORTH],AUTHORITY['EPSG','32647']]</nativeCRS> <srs>EPSG:32647</srs> <latLonBoundingBox><minx>{bbox['minx']}</minx><maxx>{bbox['maxx']}</maxx><miny>{bbox['miny']}</miny><maxy>{bbox['maxy']}</maxy><crs>EPSG:32647</crs></latLonBoundingBox></coverage>'  'http://geoserver:8080/geoserver/rest/workspaces/indx/coveragestores/{indx}_{dd}/coverages'"
         print(cmd, "publish layer")
         os.system(cmd)
 
