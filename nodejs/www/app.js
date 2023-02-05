@@ -302,8 +302,8 @@ let showIndx = async (e) => {
     fetch(lyrInfoUrl).then(res => res.json()).then(data => {
         if (data.features.length > 0) {
             data.features.map(async (i, k) => {
-                document.getElementById("ndvitxt").innerHTML = `<div class="desc">lat: ${e.latlng.lat} 
-                            <br>lon: ${e.latlng.lng}
+                document.getElementById("ndvitxt").innerHTML = `<div class="desc">lat: ${(e.latlng.lat).toFixed(3)}
+                            <br>lon: ${(e.latlng.lng).toFixed(3)}
                             <br>${indx}: ${i.properties.GRAY_INDEX.toFixed(3)} 
                             <br>วันที่: ${datefocus}`;
                 xAxis.push(k);

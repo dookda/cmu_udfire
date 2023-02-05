@@ -55,14 +55,14 @@ body {
 
 #search-panel {
     position: relative;
-    height: 14vh;
+    /* height: 14vh; */
     overflow: hidden;
     padding: 5px;
 }
 
 #search-info {
     position: relative;
-    height: 14vh;
+    /* height: 14vh; */
     overflow: hidden;
     padding: 5px;
 }

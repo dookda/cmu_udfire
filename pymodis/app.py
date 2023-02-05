@@ -163,13 +163,13 @@ def warpFile(f, dd):
 
     calNdvi(f'{out_tmp}1.tif', f'{out_tmp}2.tif', f, dd)
     calNdmi(f'{out_tmp}2.tif', f'{out_tmp}6.tif', f, dd)
-    calNdwi(f'{out_tmp}4.tif', f'{out_tmp}2.tif', f, dd)
+    # calNdwi(f'{out_tmp}4.tif', f'{out_tmp}2.tif', f, dd)
 
     removeFile("tmp")
     removeFile("out")
     removeFile("data")
     removeFile("ndvi")
-    removeFile("ndwi")
+    # removeFile("ndwi")
     removeFile("ndmi")
     print("delete file")
 
@@ -229,7 +229,7 @@ def initLoop():
     print(doyEnd)
 
     # for doy in range(1, doyEnd + 1):
-    for doy in range(1, 366):
+    for doy in range(23, 366):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -266,9 +266,9 @@ def initNow():
 
 if __name__ == '__main__':
     # initNow()
-    initLoop()
+    # initLoop()
     # schedule.every(24).hours.do(initNow)
-    schedule.every().day.at("07:30").do(initLoop)
+    # schedule.every().day.at("07:30").do(initLoop)
     while True:
         schedule.run_pending()
         time.sleep(1)
