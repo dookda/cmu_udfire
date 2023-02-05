@@ -266,9 +266,9 @@ def initNow():
 
 if __name__ == '__main__':
     # initNow()
-    # initLoop()
+    initLoop()
     # schedule.every(24).hours.do(initNow)
-    # schedule.every().day.at("07:30").do(initLoop)
+    schedule.every().day.at("07:30").do(initLoop)
     while True:
         schedule.run_pending()
         time.sleep(1)
