@@ -1,0 +1,1 @@
+GET http://www.udfire.com:3100/getpixelvalue/ndvi/<string:20220804>/17.809/100.535

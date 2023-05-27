@@ -1,5 +1,6 @@
 from math import log
 import os
+import sys
 # from unicodedata import name
 import psycopg2 as pg2
 import requests
@@ -226,10 +227,11 @@ def initLoop():
     year = date.today().year
     # year = 2021
 
+    print(sys.prefix)
     print(doyEnd)
 
     # for doy in range(1, doyEnd + 1):
-    for doy in range(23, 366):
+    for doy in range(143, 366):
         if doy < 10:
             doy = "00" + str(doy)
         elif doy < 100:
@@ -268,7 +270,7 @@ if __name__ == '__main__':
     # initNow()
     initLoop()
     # schedule.every(24).hours.do(initNow)
-    schedule.every().day.at("07:30").do(initLoop)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # schedule.every().day.at("07:30").do(initLoop)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)

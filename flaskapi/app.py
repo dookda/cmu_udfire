@@ -7,6 +7,11 @@ app = Flask(__name__)
 CORS(app, support_credentials=True)
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
 @app.route('/getpixelvalue/<string:index>/<string:yyyymmdd>/<float:latitude>/<float:longitude>')
 @cross_origin()
 def getPixelValue(index, yyyymmdd, latitude, longitude):

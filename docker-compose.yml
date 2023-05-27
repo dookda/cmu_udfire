@@ -15,7 +15,7 @@ services:
       - ./postgres/geodb3.sql:/docker-entrypoint-initdb.d/geodb.sql
 
   nodejs:
-    image: "node"
+    image: node:latest
     container_name: pymodis_nodejs
     working_dir: /app/nodejs
     restart: always
@@ -31,10 +31,10 @@ services:
     command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
 
   geoserver:
+    image: tomcat:8-jre11
     container_name: pymodis_geoserver
     depends_on:
       - postgis
-    image: tomcat:8.5.79-jre8
     volumes:
       - ./tomcat/:/usr/local/tomcat/webapps/
       - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
@@ -45,22 +45,24 @@ services:
       - '8080:8080'
 
   pymodis:
+    image: sakdahomhuan/ubuntu_geo:latest
     container_name: pymodis
-    build: ./pymodis
+    restart: always
+    # build: ./pymodis
     depends_on:
       - postgis
       - geoserver
     volumes:
       - ./pymodis:/app/pymodis
-    command: bash -c "cd pymodis && python3 app.py"
+    command: >
+      bash -c " apt update && 
+                cd pymodis && 
+                python3 app.py"
 
   flask:
+    image: sakdahomhuan/ubuntu_geo:latest
     container_name: pymodis_flask
-    build: ./flaskapi
     restart: always
-    depends_on:
-      - postgis
-      - geoserver
     volumes:
       - ./flaskapi:/app/flaskapi
       - ./pymodis/ndvi_clip/:/app/flaskapi/ndvi_clip/
@@ -68,4 +70,7 @@ services:
       - ./pymodis/ndmi_clip/:/app/flaskapi/ndmi_clip/
     ports:
       - "3100:3100"
-    command: bash -c "cd flaskapi && python3 app.py"
+    command: >
+      bash -c " apt update && 
+                cd flaskapi && 
+                python3 app.py"
