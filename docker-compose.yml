@@ -21,7 +21,7 @@ services:
     restart: always
     depends_on:
       - postgis
-      - geoserver
+      # - geoserver
     environment:
       - NODE_ENV=production
     volumes:
@@ -29,48 +29,46 @@ services:
     ports:
       - "80:3000"
     command: bash -c "npm i && npm i -g nodemon && npm i -g pm2 && nodemon server.js"
+  # geoserver:
+  #   image: tomcat:8-jre11
+  #   container_name: pymodis_geoserver
+  #   depends_on:
+  #     - postgis
+  #   volumes:
+  #     - ./tomcat/:/usr/local/tomcat/webapps/
+  #     - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
+  #     - ./pymodis/ndvi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndvi_clip/
+  #     - ./pymodis/ndwi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndwi_clip/
+  #     - ./pymodis/ndmi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndmi_clip/
+  #   ports:
+  #     - '8080:8080'
 
-  geoserver:
-    image: tomcat:8-jre11
-    container_name: pymodis_geoserver
-    depends_on:
-      - postgis
-    volumes:
-      - ./tomcat/:/usr/local/tomcat/webapps/
-      - ./tomcat/fonts/truetype/:/usr/share/fonts/truetype/
-      - ./pymodis/ndvi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndvi_clip/
-      - ./pymodis/ndwi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndwi_clip/
-      - ./pymodis/ndmi_clip/:/usr/local/tomcat/webapps/geoserver/data/ndmi_clip/
-    ports:
-      - '8080:8080'
+  # pymodis:
+  #   image: sakdahomhuan/ubuntu_geo:latest
+  #   container_name: pymodis
+  #   restart: always
+  #   depends_on:
+  #     - postgis
+  #     - geoserver
+  #   volumes:
+  #     - ./pymodis:/app/pymodis
+  #   command: >
+  #     bash -c " apt update && 
+  #               cd pymodis && 
+  #               python3 app.py"
 
-  pymodis:
-    image: sakdahomhuan/ubuntu_geo:latest
-    container_name: pymodis
-    restart: always
-    # build: ./pymodis
-    depends_on:
-      - postgis
-      - geoserver
-    volumes:
-      - ./pymodis:/app/pymodis
-    command: >
-      bash -c " apt update && 
-                cd pymodis && 
-                python3 app.py"
-
-  flask:
-    image: sakdahomhuan/ubuntu_geo:latest
-    container_name: pymodis_flask
-    restart: always
-    volumes:
-      - ./flaskapi:/app/flaskapi
-      - ./pymodis/ndvi_clip/:/app/flaskapi/ndvi_clip/
-      - ./pymodis/ndwi_clip/:/app/flaskapi/ndwi_clip/
-      - ./pymodis/ndmi_clip/:/app/flaskapi/ndmi_clip/
-    ports:
-      - "3100:3100"
-    command: >
-      bash -c " apt update && 
-                cd flaskapi && 
-                python3 app.py"
+  # flask:
+  #   image: sakdahomhuan/ubuntu_geo:latest
+  #   container_name: pymodis_flask
+  #   restart: always
+  #   volumes:
+  #     - ./flaskapi:/app/flaskapi
+  #     - ./pymodis/ndvi_clip/:/app/flaskapi/ndvi_clip/
+  #     - ./pymodis/ndwi_clip/:/app/flaskapi/ndwi_clip/
+  #     - ./pymodis/ndmi_clip/:/app/flaskapi/ndmi_clip/
+  #   ports:
+  #     - "3100:3100"
+  #   command: >
+  #     bash -c " apt update && 
+  #               cd flaskapi && 
+  #               python3 app.py"

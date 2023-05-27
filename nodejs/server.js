@@ -21,6 +21,9 @@ app.use(bodyParser.urlencoded({
 const api = require('./service/api');
 app.use(api);
 
+// const cal = require('./service/cal');
+// app.use(cal);
+
 app.use('/', express.static('www'))
 
 app.listen(port, () => {
